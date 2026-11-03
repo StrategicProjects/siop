@@ -770,6 +770,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#apoio-camara-ibge-cnpj" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apoio (Câmara, IBGE, CNPJ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apoio (Câmara, IBGE, CNPJ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siopy.camara_deputados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        camara_deputados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.ibge_municipios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ibge_municipios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.cnpj_municipio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cnpj_municipio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.sem_acento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sem_acento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1164,6 +1225,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#apoio-camara-ibge-cnpj" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apoio (Câmara, IBGE, CNPJ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apoio (Câmara, IBGE, CNPJ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#siopy.camara_deputados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        camara_deputados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.ibge_municipios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ibge_municipios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.cnpj_municipio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cnpj_municipio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#siopy.sem_acento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        sem_acento
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1432,8 +1554,11 @@ sem <code>ORDER BY</code> e particione por órgão/UO quando o resultado for mui
     <div class="doc doc-contents first">
 
         <p>Emendas parlamentares (<code>/api-de-dados/emendas</code>), todas as páginas.</p>
-<p><code>autor</code> é o nome do parlamentar (busca textual); <code>tipo</code> como na API
-(ex.: "Emenda Individual - Transferências com Finalidade Definida"). Valores em R$ numéricos.</p>
+<p><code>autor</code> é o nome do parlamentar (busca textual); acentos são removidos e
+o nome vai em maiúsculas automaticamente — a busca da API não encontra
+nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). <code>tipo</code> como na
+API (ex.: "Emenda Individual - Transferências com Finalidade Definida").
+Valores em R$ numéricos.</p>
 
 
     </div>
@@ -1581,6 +1706,87 @@ sem <code>ORDER BY</code> e particione por órgão/UO quando o resultado for mui
     <div class="doc doc-contents first">
 
         <p>Liga ou desliga as mensagens informativas (success/step/inform/progress).</p>
+
+
+    </div>
+
+</div><h2 id="apoio-camara-ibge-cnpj">Apoio (Câmara, IBGE, CNPJ)<a class="headerlink" href="#apoio-camara-ibge-cnpj" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="siopy.camara_deputados" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">siopy</span><span class="o">.</span><span class="n">camara_deputados</span><span class="p">(</span><span class="n">uf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legislatura</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#siopy.camara_deputados" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Deputados federais (<code>GET /deputados</code> dos Dados Abertos da Câmara), com paginação.</p>
+<p>Sem filtros, devolve os deputados em exercício. Colunas: <code>id</code>, <code>nome</code>,
+<code>sigla_partido</code>, <code>sigla_uf</code>, <code>id_legislatura</code>, <code>email</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="siopy.ibge_municipios" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">siopy</span><span class="o">.</span><span class="n">ibge_municipios</span><span class="p">(</span><span class="n">uf</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#siopy.ibge_municipios" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Municípios (API de localidades do IBGE), com a grafia oficial dos nomes.</p>
+<p><code>uf = None</code> devolve o Brasil inteiro. Colunas: <code>codigo</code> (7 dígitos,
+texto), <code>nome</code> e <code>uf</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="siopy.cnpj_municipio" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">siopy</span><span class="o">.</span><span class="n">cnpj_municipio</span><span class="p">(</span><span class="n">cnpj</span><span class="p">)</span></code>
+
+<a href="#siopy.cnpj_municipio" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Município e UF da sede de cada CNPJ (https://minhareceita.org).</p>
+<p>Resolve favorecidos de nome genérico ("FUNDO MUNICIPAL DE SAUDE") nos
+documentos de despesa. CNPJs não encontrados vêm com <code>NA</code>.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="siopy.sem_acento" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">siopy</span><span class="o">.</span><span class="n">sem_acento</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></code>
+
+<a href="#siopy.sem_acento" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Troca caracteres acentuados do português pelos equivalentes ASCII.</p>
+<p>Útil para casar nomes entre fontes — a busca textual do Portal da
+Transparência, por exemplo, não encontra nomes acentuados.</p>
 
 
     </div>
