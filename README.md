@@ -23,8 +23,8 @@ federal** a partir de fontes públicas:
 
 ```
 siop/
-├── siopr/        pacote R   (httr2 + tibble)      — R CMD check OK, 28 testes
-├── siopy/        pacote Python (httpx + pandas)   — 23 testes (+4 live opt-in)
+├── siopr/        pacote R   (httr2 + tibble)      — R CMD check --as-cran 0/0/0
+├── siopy/        pacote Python (httpx + pandas)   — pytest + ruff (testes live opt-in)
 ├── fixtures/     amostras reais (SPARQL) e sintéticas (Portal) usadas nos testes
 ├── schemas/      schemas GraphQL da API autenticada do SIOP (referência futura)
 └── DECISIONS.md  decisões de projeto e seus porquês
@@ -40,10 +40,11 @@ siop/
 | `siop_orgaos(ano)`, `siop_exercicios()`, `siop_ultima_atualizacao()` | metadados do RDF |
 | `siop_catalogo()` | tudo que está publicado na página de Dados Abertos (URLs raspadas) |
 | `siop_cadastro_acoes(ano, tipo)`, `siop_creditos(ano)`, `siop_acompanhamento(ano)`, `siop_regionalizacao(ano)` | CSVs oficiais com cache em disco |
-| `pt_emendas(ano, autor, ...)` | emendas com autor, número, valores (todas as páginas) |
-| `pt_emenda_documentos(codigo)` | empenhos/liquidações/pagamentos da emenda |
-| `pt_despesa_documento(codigo)`, `pt_documentos_relacionados()`, `pt_favorecidos_finais()` | detalhe dos documentos SIAFI |
+| `pt_emendas(ano, autor, ...)` | emendas com autor, número, valores (um ou mais autores; acentos normalizados automaticamente) |
+| `pt_emenda_documentos(codigos)` | empenhos/liquidações/pagamentos das emendas (um ou mais códigos → um tibble/DataFrame) |
+| `pt_despesa_documento(codigos)`, `pt_documentos_relacionados()`, `pt_favorecidos_finais()` | detalhe dos documentos SIAFI (também vetorizadas) |
 | `emendas_execucao(ano, autor)` | tudo unido: uma linha por documento com favorecido/UG/UO |
+| `camara_deputados(uf)`, `ibge_municipios(uf)`, `cnpj_municipio(cnpj)`, `sem_acento(x)` | apoio, sem chave: deputados (Câmara), municípios com grafia oficial (IBGE), município-sede de CNPJ (Minha Receita) |
 
 ## Como as fontes se completam
 

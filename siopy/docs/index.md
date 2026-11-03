@@ -58,9 +58,14 @@ siopy.siop_creditos(2025)
 siopy.siop_catalogo()  # tudo que está publicado na página de Dados Abertos
 
 # Portal da Transparência — export PORTAL_TRANSPARENCIA_API_KEY=...
-pt = siopy.pt_emendas(2025, autor="NOME DO PARLAMENTAR")
-docs = siopy.pt_emenda_documentos(pt.loc[0, "codigo_emenda"])
-det = siopy.pt_despesa_documento(docs.loc[0, "codigo_documento"])
+# As funções pt_* aceitam listas e devolvem um único DataFrame: dos autores
+# (acentos normalizados sozinhos) aos documentos SIAFI de cada emenda.
+deputados = siopy.camara_deputados(uf="PE")
+emendas = siopy.pt_emendas(2025, autor=list(deputados["nome"]))
+docs = siopy.pt_emenda_documentos(list(emendas["codigo_emenda"]))
+pagamentos = siopy.pt_despesa_documento(
+    docs.loc[docs["fase"] == "Pagamento", "codigo_documento"].unique()
+)
 
 # Tudo junto: 1 linha por documento, com favorecido/UG/UO
 siopy.emendas_execucao(2025, autor="NOME DO PARLAMENTAR")
