@@ -1,4 +1,11 @@
-## Submission: siopr 0.1.0
+## Resubmission: siopr 0.1.0
+
+This is a resubmission. As requested by Uwe Ligges, the invalid relative
+file URI `../siopy` in README.md was replaced by the absolute URL of the
+sibling package's documentation
+(<https://strategicprojects.github.io/siop/siopy/>).
+
+## Original submission notes
 
 This is a new submission. The package is a tidyverse-friendly client for
 public sources of the Brazilian federal budget: the SPARQL endpoint and the

@@ -16,7 +16,8 @@ Orçamento Federal e emendas parlamentares em tibbles, a partir de **fontes púb
   de despesa (empenhos, pagamentos, favorecidos). Chave gratuita:
   <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
 
-Pacote irmão em Python: [`siopy`](../siopy). Documentação:
+Pacote irmão em Python:
+[`siopy`](https://strategicprojects.github.io/siop/siopy/). Documentação:
 <https://strategicprojects.github.io/siop/>.
 
 ## Instalação
