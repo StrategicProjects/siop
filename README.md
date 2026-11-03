@@ -5,7 +5,7 @@
 [![R-CMD-check](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml)
 [![siopy](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/siopr)](https://CRAN.R-project.org/package=siopr)
-[![PyPI](https://img.shields.io/pypi/v/siopy.svg)](https://pypi.org/project/siopy/)
+[![PyPI](https://img.shields.io/pypi/v/siopy-br.svg)](https://pypi.org/project/siopy-br/)
 <!-- badges: end -->
 
 Pacotes irmãos, com a mesma superfície, para obter **emendas parlamentares e o orçamento
@@ -19,7 +19,7 @@ federal** a partir de fontes públicas:
 | Pacote | Linguagem | Instalação | Docs |
 | --- | --- | --- | --- |
 | [`siopr`](siopr/) | R (tibbles, httr2) | CRAN (em preparação): `pak::pak("StrategicProjects/siop/siopr")` | [site](https://strategicprojects.github.io/siop/), [README](siopr/README.md), [NEWS](siopr/NEWS.md) |
-| [`siopy`](siopy/) | Python (pandas, httpx) | PyPI (em preparação): `pip install siopy` | [site](https://strategicprojects.github.io/siop/siopy/), [README](siopy/README.md), [NEWS](siopy/NEWS.md) |
+| [`siopy`](siopy/) | Python (pandas, httpx) | PyPI: `pip install siopy-br` (o import é `siopy`) | [site](https://strategicprojects.github.io/siop/siopy/), [README](siopy/README.md), [NEWS](siopy/NEWS.md) |
 
 ```
 siop/

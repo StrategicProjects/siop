@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/license-MIT-darkviolet.svg)
 ![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)
 [![siopy](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml)
-[![PyPI](https://img.shields.io/pypi/v/siopy.svg)](https://pypi.org/project/siopy/)
+[![PyPI](https://img.shields.io/pypi/v/siopy-br.svg)](https://pypi.org/project/siopy-br/)
 <!-- badges: end -->
 
 Orçamento Federal e emendas parlamentares em `pandas`, a partir de **fontes públicas**:
@@ -23,9 +23,13 @@ Documentação: <https://strategicprojects.github.io/siop/siopy/> (site do monor
 ## Instalação
 
 ```bash
-pip install siopy            # quando publicado no PyPI
+pip install siopy-br         # o import continua: import siopy
 pip install -e ".[dev]"      # desenvolvimento, a partir deste diretório
 ```
+
+> No PyPI o pacote se chama **`siopy-br`** (o nome `siopy` é recusado por
+> colidir com o projeto `slopy` na normalização do PyPI, que trata i≡l);
+> o pacote importável segue sendo `siopy`, espelho do `siopr`.
 
 ## Uso
 

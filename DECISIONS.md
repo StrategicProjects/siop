@@ -88,3 +88,13 @@ DESCRIPTION com Title/Description em inglês (prática CRAN da org) e `Language:
 documentação em português. Nomes conferidos livres em 2026-11-03: `siopr` não existe no CRAN,
 `siopy` não existe no PyPI. Publicação no PyPI por trusted publishing (configurar o publisher
 pendente no PyPI: owner StrategicProjects, repo siop, workflow pypi.yaml, environment pypi).
+
+## 2026-11-03 · PyPI: distribuição `siopy-br`, import `siopy`
+
+O PyPI recusou o nome `siopy`: a checagem de similaridade ultranormaliza nomes dobrando
+caracteres confundíveis (i≡l, o≡0) e `siopy` colide com o projeto existente `slopy`.
+Alternativas conferidas livres: siopy-br, siopbr, pysiop, emendaspy (sioppy colide com sloppy).
+Escolhido **`siopy-br`** (pending publisher criado pelo usuário: repo StrategicProjects/siop,
+workflow pypi.yaml, environment pypi): muda só o nome de distribuição; o pacote importável
+continua `siopy`, preservando código, docs, site e o espelho com `siopr`. Precedente na org:
+`pixbr`.

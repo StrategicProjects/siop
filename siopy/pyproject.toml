@@ -3,7 +3,7 @@ requires = ["hatchling>=1.21"]
 build-backend = "hatchling.build"
 
 [project]
-name = "siopy"
+name = "siopy-br"
 version = "0.1.0"
 description = "Brazilian federal budget (SIOP open data) and parliamentary amendments (Portal da Transparência) in pandas"
 readme = "README.md"
