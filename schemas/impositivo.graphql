@@ -1,0 +1,136 @@
+# ===================== impositivo/itens =====================
+"Identifica a emenda/beneficiário/impedimento. Sem beneficiario e impedimento = emenda; sem impedimento = beneficiário; todos preenchidos = impedimento."
+type Classificacao {
+  exercicio: ID
+  autor: ID          # 4 dígitos
+  emenda: ID         # 8 dígitos
+  programacao: ID    # esfera.uo.funcao.subfuncao.programa.acao.localizador
+  dotacao: ID        # idoc.iduso.fonte.natureza.rp
+  beneficiario: ID   # CNPJ
+  impedimento: ID    # id do tipo de impedimento
+}
+input ClassificacaoInput { exercicio: ID, autor: ID, emenda: ID, programacao: ID, dotacao: ID, beneficiario: ID, impedimento: ID }
+
+type DetalhamentoObjeto { objeto: String!, valor: Int!, descricao: String }
+input DetalhamentoObjetoInput { objeto: String!, valor: Int!, descricao: String }
+type Erro { mensagem: String!, procedencia: String!, datahora: Time! }
+type ErrosPorPedido { id: Int!, erros: [Erro!] }
+input FormulasInput { antes: String, depois: String }
+input IdOuChave { id: Int! }
+
+"Abstração básica: emenda, beneficiário ou impedimento (distinção pelo campo classificacao, hierárquicos)."
+type Item {
+  classificacao: Classificacao!
+  valor: Valor
+  detalhamento: [Item!]
+  metadados: Metadados
+}
+input ItemInput { classificacao: ClassificacaoInput!, valor: Int, prioridade: Int, justificativa: String, detalhamentoObjeto: [DetalhamentoObjetoInput!], chave: ID, tags: [String!], analiseSetorial: Boolean }
+type ItemPedido { classificacao: Classificacao!, valor: Int, prioridade: Int, justificativa: String, detalhamentoObjeto: [DetalhamentoObjeto!], chave: ID, tags: [String!], analiseSetorial: Boolean }
+input Justificativa { idouchave: IdOuChave!, justificativa: String! }
+type Mapeamento { de: ID!, para: ID! }
+input MapeamentoInput { de: ID!, para: ID! }
+
+type Metadados {
+  prioridade: Int              # ordem de prioridade do beneficiário dentro do autor
+  prioridadeInformada: Boolean # atribuída pelo usuário (true) ou pelo sistema
+  saude: Boolean               # emenda associada a ações de saúde
+  justificativa: String        # justificativa do impedimento
+  detalhamentoObjeto: [DetalhamentoObjeto!]
+  ptres: String                # Programa de Trabalho Resumido (SIAFI)
+  analiseSetorial: Boolean
+}
+input ModsBeneficiariosInput { movimentacoes: [MovsInput!]! }
+input ModsImpedimentosInput { movimentacoes: [MovsInput!]!, justificativas: [Justificativa!]! }
+input MovsInput { idouchave: IdOuChave!, valor: Int! }
+
+type Mutation {
+  salvaPedido(pedido: PedidoInput!): PedidoOutput!
+  salvaPedidoSaneamento(pedido: PedidoInput!): PedidoOutput!
+  editarPedido(pedido: PedidoInput!): PedidoOutput!
+  editarPedidos(pedidos: [PedidoInput!]!): [PedidoOutput!]!
+  editarPedidoSaneamento(pedido: PedidoInput!): PedidoOutput!
+  editarPedidosSaneamentos(pedidos: [PedidoInput!]!): [PedidoOutput!]!
+  submeterPedido(id: ID!): ResultadoVerificacoes!
+  submeterPedidos(ids: [ID!]!): ResultadoVerificacoes!
+  submeterPedidosUmAUm(ids: [ID!]!): ResultadoVerificacoes!
+  aprovaPedido(id: ID!): Boolean!
+  verificarPedidos(ids: [ID!]!, exercicio: ID!): ResultadoVerificacoes!
+  atualizarPedidosNivelDotacao(exercicio: ID!): Int!
+  corrigirStatusPedidos: StatusAlterado!
+  cancelarMovimentacoes(movsEm: [MovsInput!], movsBen: ModsBeneficiariosInput, movsImp: ModsImpedimentosInput): Boolean!
+}
+enum Operacao { IndicacaoBeneficiario, AlteracaoBeneficiario, ExclusaoBeneficiario, Priorizacao, InclusaoImpedimento, AlteracaoImpedimento, ExclusaoImpedimento, TrocaClassificacaoOrcamentaria, Saneamento, AlteracaoAnaliseSetorial, SaneamentoViaBeneficiario }
+
+"Pedido: inclusão = só 'para'; exclusão = só 'de'; alteração = 'de' + 'para' + 'mapeamentos'."
+type Pedido {
+  id: ID, dataHora: Time, status: StatusPedido, pedidosAlteracaoId: [Int!], dataHoraUltimaVerificacao: Time,
+  erros: [Erro!], de: [ItemPedido!], para: [ItemPedido!], mapeamentos: [Mapeamento!], operacoes: [Operacao!],
+  origem: String, usuario: Usuario, usuarioUltimaAlteracao: Usuario
+}
+input PedidoInput { id: ID, de: [ItemInput!], para: [ItemInput!], mapeamentos: [MapeamentoInput!], origem: String, regrasIdsConfirmadas: [Int!] }
+type PedidoOutput { pedido: Pedido!, advertencias: [String!], regrasAConfirmar: [Regra!], mensagens: [String!] }
+type PedidoRegrasAConfirmar { pedidoID: ID!, regra: Regra! }
+
+"""
+itens: obrigatório filtrar ao menos por exercicio. Retorna apenas itens cujo autor ou órgão estejam
+vinculados ao usuário. Se 'valor' é pedido, os valores são SOMADOS no agrupamento definido pelos
+subcampos de 'classificacao'; 'detalhamento' dá sub-agrupamentos (filhos).
+Ex.: { itens(filtro:{exercicio:"2020"}) { classificacao{autor} detalhamento{ classificacao{emenda} } } }
+"""
+type Query {
+  itens(filtro: ClassificacaoInput, formulas: FormulasInput, skip: Int): [Item!]!
+  itens1(filtro: ClassificacaoInput, formulas: FormulasInput, skip: Int): [Item!]!   # aliases p/ clientes limitados
+  itens2(...): [Item!]!  itens3(...): [Item!]!  itens4(...): [Item!]!
+  pedidos(id: ID, status: [StatusPedido!], operacoes: [Operacao!], filtro: ClassificacaoInput, dataInicial: Time, dataFinal: Time, pedidosAlteracaoId: [Int!], cpf: String): [Pedido!]!
+  podeAlterarValorBeneficiario(exercicio: Int!): Boolean!
+  podeSanarImpedimento(exercicio: ID!, autor: ID!): Boolean!
+  podeEditarPedidoDeSaneamentoDeImpedimento(exercicio: ID!, autor: ID!): Boolean!
+  podeSubmeterPedidoDeSaneamentoDeImpedimento(exercicio: ID!, autor: ID!): Boolean!
+  podeSanarImpedimentoViaGND(exercicio: ID!): Boolean!
+  podeAlterarAnaliseSetorial(exercicio: Int!): Boolean!
+  permiteApenasUmObjetoPorBeneficiario: Boolean!
+}
+type Regra { id: ID!, mensagem: String! }
+type ResultadoVerificacoes { advertencias: [String!], regrasAconfirmarPorPedidoID: [PedidoRegrasAConfirmar!] }
+type StatusAlterado { pedidos: [Int!], corrigidos: Int!, comErros: Int!, erros: [ErrosPorPedido!] }
+enum StatusPedido { EmEdicao, EmAnalise, Aprovado, Rejeitado, Cancelado }
+scalar Time
+type Usuario { id: ID!, nome: String, cpf: String }
+
+type Valor {
+  dotacao: Int        # valor na LOA (+ alterações)
+  beneficiario: Int   # parcela com beneficiário indicado
+  impedimento: Int    # valor impedido
+  priorizado: Int     # valor que deve estar desbloqueado no SIAFI
+  empenhado: Int      # empenhado no SIAFI
+  bloqueado: ValorBloqueado
+}
+type ValorBloqueado { dotacao: Int, beneficiario: Int }
+
+# ===================== impositivo/emendas =====================
+type Autor { id: Int!, codigo: String!, nome: String!, emexercicio: Boolean!, exercicio: Int!, tipo: Int!, cpf: String, email: String, partido: String }
+type Query {
+  usuariosQueRespondemPeloAutor(codigos: [String!]!, exercicio: Int!): [Usuario!]!
+  autores(codigos: [String!], exercicio: Int, nome: String, pesquisa: String, ids: [Int!], tipos: [Int!]): [Autor!]!
+  autoresVinculados(exercicio: Int!, pesquisa: String!): [Autor!]!
+  exerciciosVinculados: [Int!]!
+  valorTotalPorAutor(exercicio: Int!): Int!
+  exerciciosAutores: [Int!]!
+}
+type Mutation { salvarAutor(id: Int!, emexercicio: Boolean!): Boolean, atualizarValorEmpenhado(exercicio: Int!): Int!, atualizarUsuariosDosAutores(exercicio: Int!): [ResultadoUsuariosDosAutores!]! }
+type Usuario { nome: String!, email: String!, emailAlternativo: String }
+
+# ===================== impositivo/beneficiarios =====================
+type Beneficiario { id: Int!, cnpj: String!, emendaFinanceiroId: Int! }
+type Objeto { id: Int!, nome: String!, snObra: Boolean!, exercicio: Int! }
+type Query { beneficiarios(ids: [Int!]): [Beneficiario!]!, objetos(filtro: String!, exercicio: Int!): [Objeto!]! }
+
+# ===================== impositivo/impedimentos =====================
+type TipoImpedimento { id: ID!, nome: String!, confirmacao: Boolean!, saldoIndicar: Boolean! }
+type Query { tiposDeImpedimentos(exercicio: Int!): [TipoImpedimento!]! }
+
+# ===================== impositivo/bloqueio (resumo; admin/SOF) =====================
+# Queries: rejeicoes, contencoesAutor, contencaoAutorLog, contencaoRotinaLog, contencaoRelatorioExecucao(+Detalhe),
+#          parametrosContencao, valorDesbloqueadoPorAutor, valorContingenciadoPorAutor, ...
+# Mutations administrativas de contenção/bloqueio — fora do escopo do pacote.

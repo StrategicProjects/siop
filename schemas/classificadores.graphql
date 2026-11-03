@@ -1,0 +1,63 @@
+# ===================== qualitativo =====================  (decodifica `programacao`)
+type Classificador { codigo: String!, nome: String!, id: Int! }
+type Classificacao { esfera, orgao, funcao, subFuncao, programa, acao, localizador, planoOrcamentario: Classificador, classificacaoCodificada: String! }
+type Acao { classificacaoCodificada: String!, classificacao: Classificacao, descricao: String, tipoAcao: String!, subTipoAcao: String, tipoInclusaoAcao: String!, baseLegal: String }
+type Localizador { classificacaoCodificada: String!, classificacao: Classificacao, identificadorUnico: Int!, tipoInclusao: Int! }
+type PlanoOrcamentario { classificacao: Classificador, acaoid: Int!, identificadorUnico: Int! }
+type Esfera { id: Int, codigo: String, nome: String, nomeAbreviado: String, ativo: Boolean }
+input FiltroAcao { exercicio: Int!, palavraChave: String!, orgaoids: [Int!], codigos: [String!] }
+input FiltroLocalizador { exercicio: Int!, classificacoesCodificadas: [String!], classificacoesParciais: [ClassificacaoInput], ids: [Int!] }
+input FiltroPlanoOrcamentario { acaoids: [Int!]!, acao: String }
+type Query {
+  classificacoes(exercicio: Int!, classificacoesCodificadas: [String!]!): [Classificacao!]!   # <-- chave p/ decodificar programacao
+  esferas(filtro: EsferaInput): [Esfera!]!
+  localizadores(filtro: FiltroLocalizador!, n: Int): [Localizador!]!
+  acoes(filtro: FiltroAcao!, n: Int): [Acao!]!
+  planosorcamentarios(filtro: FiltroPlanoOrcamentario!, n: Int): [PlanoOrcamentario!]!
+}
+
+# ===================== quantitativo =====================  (decodifica `dotacao`)
+type Classificador { id: Int!, codigo: String!, nome: String! }
+type Natureza { categoriaEconomica, grupo, modalidade, elemento, subelemento: Classificador!, nome: String! }
+type Classificacao { natureza: Natureza!, iduso: Classificador!, fonte: Classificador!, idoc: Classificador!, resultadoPrimario: Classificador!, classificacaoCodificada: String!, classificacaoCodificadaCompleta: String! }
+type Financeiro { id: Int!, localizadorId: Int!, valor: String!, valorBloqueado: String!, saude: Boolean!, emendaParlamentarIndividual: Boolean!, classificacaoCodificada: String!, classificacaoCodificadaCompleta: String!, classificacao: Classificacao, planoOrcamentario: Classificador, resultadoPrimarioLei: Classificador, momento: Int! }
+input FiltroFinanceiro { exercicio: Int!, localizadoresIds: [Int!]!, elementoDeDespesa: String, identificadorPlanoOrcamentario: [Int!], incluiPropostasNaoAtuais: Boolean }
+type Query {
+  classificacoes(exercicio: Int!, classificacoesCodificadas: [String!]): [Classificacao!]!   # <-- chave p/ decodificar dotacao
+  financeiros(filtro: FiltroFinanceiro!): [Financeiro!]!
+  minimosParaInvestimentos(filtro: FiltroMinimoInvestimentos): [MinimoInvestimentos!]!
+}
+
+# ===================== quantitativo/classificadores =====================
+type Query {
+  idsuso(filtro: IdusoInput): [Iduso!]!
+  gruposTipoDetalhamento(filtro: GrupoTipoDetalhamentoInput): [GrupoTipoDetalhamento!]!
+  tiposDetalhamento(filtro: TipoDetalhamentoInput): [TipoDetalhamento!]!
+  grupoNaturezaDespesa(pesquisa: String): [Classificador!]!
+  modalidade(exercicio: Int!, pesquisa: String): [Classificador!]!
+  tipoResultadoPrimario(filtro: TipoResultadoPrimarioInput!): [TipoResultadoPrimario!]!
+  fonte(filtro: FonteInput): [Fonte!]!
+  fonteRegras(filtro: FonteRegrasFiltroInput): [FonteRegra!]!
+}
+type Iduso { id: Int, codigo: String, nome: String, nomeAbreviado: String, ativo: Boolean, valorizacao: String, exercicio: Int }
+type Fonte { id: Int, codigo: String, exercicio: Int, nome: String }
+type TipoResultadoPrimario { id: Int!, codigo: String!, nome: String! }
+
+# ===================== orgaos =====================
+input FiltroInput { ids: [Int!], idspai: [Int!], codigos: [String!], tipos: [String!], exercicio: Int, status: Status, divisaoOrganogramaId: Int, orgaoApoio: Boolean, todosExercicios: Boolean, poderId: Int }
+type Orgao { id: Int!, idpai: Int!, codigo: String!, codigoOrgaoPai: String!, nome: String!, exercicio: Int!, ativo: Boolean!, orgaoApoio: Boolean!, tipoOrgao: String!, descricaoAbreviada: String!, sigla: String, poderId: Int, poderDescricao: String, ... }
+enum Status { Ativo, Inativo, Todos }
+type Query {
+  orgaos(filtro: FiltroInput!): [Orgao!]!
+  vinculadosAoUsuario(filtro: FiltroInput!): [Orgao!]!
+  uosVinculadasAoUsuario(filtro: FiltroInput!): [Orgao!]!
+  exerciciosOrgaos(tipo: String!): [Int!]!
+  subuos(filtro: FiltroSubUOInput!): [SubUO!]!
+  poderes(id: Int, ids: [Int!]): [Poder!]!
+  tiposResultadoPrimario(id: Int, exercicio: Int): [TipoResultadoPrimario!]!
+  funcoesTipicas(id: Int, exercicio: Int): [FuncaoTipica!]!
+  naturezasJuridicas(id: Int): [NaturezaJuridica!]!
+}
+
+# ===================== parametros =====================
+type Query { parametros(filtro: FiltroParametro): [Parametro!]!, parametrosExercicio(filtro: FiltroParametroExercicio): [ParametroExercicio!]!, valoresParametros(ids: [Int!]): [String!], todosExercicios: [String!], ... }

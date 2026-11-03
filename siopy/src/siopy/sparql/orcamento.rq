@@ -1,0 +1,56 @@
+PREFIX loa: <http://vocab.e.gov.br/2013/09/loa#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?item ?exercicio ?data_atualizacao
+       ?cod_esfera ?desc_esfera ?cod_orgao ?desc_orgao ?cod_uo ?desc_uo
+       ?cod_funcao ?desc_funcao ?cod_subfuncao ?desc_subfuncao ?cod_programa ?desc_programa
+       ?cod_acao ?desc_acao ?cod_localizador ?desc_localizador ?cod_po ?desc_po
+       ?cod_fonte ?desc_fonte ?cod_categoria ?desc_categoria ?cod_gnd ?desc_gnd
+       ?cod_modalidade ?desc_modalidade ?cod_elemento ?desc_elemento ?cod_iduso ?desc_iduso
+       ?cod_rp ?desc_rp
+       ?ploa ?autografo ?loa ?lei_mais_credito ?empenhado ?liquidado ?pago
+WHERE {
+  GRAPH <http://orcamento.dados.gov.br/{{exercicio}}/> {
+    ?item a loa:ItemDespesa ;
+          loa:temExercicio ?ex ;
+          loa:temEsfera ?esf ;
+          loa:temUnidadeOrcamentaria ?uo ;
+          loa:temFuncao ?fu ;
+          loa:temSubfuncao ?sf ;
+          loa:temPrograma ?pr ;
+          loa:temAcao ?ac ;
+          loa:temSubtitulo ?lo ;
+          loa:temPlanoOrcamentario ?po ;
+          loa:temFonteRecursos ?fo ;
+          loa:temCategoriaEconomica ?ca ;
+          loa:temGND ?gn ;
+          loa:temModalidadeAplicacao ?mo ;
+          loa:temElementoDespesa ?el ;
+          loa:temIdentificadorUso ?iu ;
+          loa:temResultadoPrimario ?rp ;
+          loa:valorProjetoLei ?ploa ;
+          loa:valorDotacaoInicial ?loa ;
+          loa:valorLeiMaisCredito ?lei_mais_credito ;
+          loa:valorEmpenhado ?empenhado ;
+          loa:valorLiquidado ?liquidado ;
+          loa:valorPago ?pago .
+    OPTIONAL { ?item loa:valorAutografo ?autografo }
+    ?ex loa:identificador ?exercicio ; loa:dataUltimaAtualizacao ?data_atualizacao .
+    ?esf loa:codigo ?cod_esfera ; rdfs:label ?desc_esfera .
+    ?uo loa:codigo ?cod_uo ; rdfs:label ?desc_uo ; loa:temOrgao ?org .
+    ?org loa:codigo ?cod_orgao ; rdfs:label ?desc_orgao .
+    ?fu loa:codigo ?cod_funcao ; rdfs:label ?desc_funcao .
+    ?sf loa:codigo ?cod_subfuncao ; rdfs:label ?desc_subfuncao .
+    ?pr loa:codigo ?cod_programa ; rdfs:label ?desc_programa .
+    ?ac loa:codigo ?cod_acao ; rdfs:label ?desc_acao .
+    ?lo loa:codigo ?cod_localizador ; rdfs:label ?desc_localizador .
+    ?po loa:codigo ?cod_po . OPTIONAL { ?po rdfs:label ?desc_po }
+    ?fo loa:codigo ?cod_fonte . OPTIONAL { ?fo rdfs:label ?desc_fonte }
+    ?ca loa:codigo ?cod_categoria ; rdfs:label ?desc_categoria .
+    ?gn loa:codigo ?cod_gnd ; rdfs:label ?desc_gnd .
+    ?mo loa:codigo ?cod_modalidade ; rdfs:label ?desc_modalidade .
+    ?el loa:codigo ?cod_elemento . OPTIONAL { ?el rdfs:label ?desc_elemento }
+    ?iu loa:codigo ?cod_iduso . OPTIONAL { ?iu rdfs:label ?desc_iduso }
+    ?rp loa:codigo ?cod_rp . OPTIONAL { ?rp rdfs:label ?desc_rp }
+{{filtros}}
+  }
+}
