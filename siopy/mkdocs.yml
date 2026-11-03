@@ -1,0 +1,59 @@
+site_name: siopy
+site_description: Orçamento Federal (SIOP Dados Abertos) e emendas parlamentares (Portal da Transparência) em pandas
+site_url: https://strategicprojects.github.io/siop/siopy/
+repo_url: https://github.com/StrategicProjects/siop
+edit_uri: ""
+
+theme:
+  name: material
+  language: pt-BR
+  logo: figures/logo.svg
+  favicon: figures/logo.svg
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Modo escuro
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Modo claro
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+
+nav:
+  - Início: index.md
+  - Guias:
+      - "Emendas parlamentares: do RDF ao Portal": emendas.md
+  - Referência: reference.md
+  - Changelog: changelog.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: sphinx
+            show_source: false
+            show_root_heading: true
+            heading_level: 3
+            members_order: source
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - toc:
+      permalink: true
+
+extra_css:
+  - extra.css

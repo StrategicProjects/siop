@@ -9,4 +9,5 @@ build/
 .Rhistory
 *.Rcheck/
 siopr/docs/
+siopy/site/
 .env

@@ -37,9 +37,11 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest>=8", "respx>=0.21"]
 dev = ["pytest>=8", "respx>=0.21", "ruff>=0.5", "build>=1.0"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.24"]
 
 [project.urls]
 Homepage = "https://strategicprojects.github.io/siop/"
+Documentation = "https://strategicprojects.github.io/siop/siopy/"
 Repository = "https://github.com/StrategicProjects/siop"
 Issues = "https://github.com/StrategicProjects/siop/issues"
 Changelog = "https://github.com/StrategicProjects/siop/blob/main/siopy/NEWS.md"

@@ -8,9 +8,12 @@ template:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news]
+    left:  [intro, reference, articles, news, siopy]
     right: [search, github, lightswitch]
   components:
+    siopy:
+      text: Python (siopy)
+      href: https://strategicprojects.github.io/siop/siopy/
     articles:
       text: Artigos
       menu:

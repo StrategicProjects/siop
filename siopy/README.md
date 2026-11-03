@@ -17,7 +17,8 @@ Orçamento Federal e emendas parlamentares em `pandas`, a partir de **fontes pú
   Requer chave gratuita: <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
 
 Pacote irmão em R: [`siopr`](https://github.com/StrategicProjects/siop/tree/main/siopr).
-Documentação: <https://strategicprojects.github.io/siop/>.
+Documentação: <https://strategicprojects.github.io/siop/siopy/> (site do monorepo:
+<https://strategicprojects.github.io/siop/>).
 
 ## Instalação
 

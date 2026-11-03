@@ -19,7 +19,7 @@ federal** a partir de fontes públicas:
 | Pacote | Linguagem | Instalação | Docs |
 | --- | --- | --- | --- |
 | [`siopr`](siopr/) | R (tibbles, httr2) | CRAN (em preparação): `pak::pak("StrategicProjects/siop/siopr")` | [site](https://strategicprojects.github.io/siop/), [README](siopr/README.md), [NEWS](siopr/NEWS.md) |
-| [`siopy`](siopy/) | Python (pandas, httpx) | PyPI (em preparação): `pip install siopy` | [README](siopy/README.md), [NEWS](siopy/NEWS.md) |
+| [`siopy`](siopy/) | Python (pandas, httpx) | PyPI (em preparação): `pip install siopy` | [site](https://strategicprojects.github.io/siop/siopy/), [README](siopy/README.md), [NEWS](siopy/NEWS.md) |
 
 ```
 siop/

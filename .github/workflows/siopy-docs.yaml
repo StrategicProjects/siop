@@ -1,0 +1,44 @@
+# Monta o site mkdocs do siopy e publica em gh-pages/siopy, servido em
+# https://strategicprojects.github.io/siop/siopy/ (o pkgdown do siopr ocupa
+# a raiz; os dois deploys usam clean escopado para não se apagarem).
+name: siopy-docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "siopy/**"
+      - ".github/workflows/siopy-docs.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages-deploy
+    defaults:
+      run:
+        working-directory: siopy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[docs]"
+      # A home e o changelog são o README e o NEWS; copiar aqui mantém o
+      # checkout portátil (sem symlinks).
+      - name: Refresh copied pages
+        run: |
+          cp README.md docs/index.md
+          cp NEWS.md docs/changelog.md
+      - run: mkdocs build
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4.7.3
+        with:
+          branch: gh-pages
+          folder: siopy/site
+          target-folder: siopy
+          clean: true
