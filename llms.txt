@@ -32,10 +32,11 @@ pak::pak("StrategicProjects/siop/siopr")
 ``` r
 
 library(siopr)
+library(dplyr)
 
 # Emendas na LOA 2025 (RP 6 = individuais, 7 = bancada, 8 = comissão, 9 = relator)
-em <- siop_emendas(2025, tipo = c("individual", "bancada"))
-dplyr::summarise(em, dplyr::across(c(loa, empenhado, pago), sum), .by = tipo_emenda)
+siop_emendas(2025, tipo = c("individual", "bancada")) |>
+  summarise(across(c(loa, empenhado, pago), sum), .by = tipo_emenda)
 
 # Só o Ministério da Saúde, função 10
 siop_emendas(2025, tipo = "individual", orgao = "36000", funcao = "10")
@@ -56,9 +57,20 @@ siop_creditos(2025)
 siop_catalogo()
 
 # Portal da Transparência — Sys.setenv(PORTAL_TRANSPARENCIA_API_KEY = "...")
-pt   <- pt_emendas(2025, autor = "NOME DO PARLAMENTAR")
-docs <- pt_emenda_documentos(pt$codigo_emenda[[1]])
-det  <- pt_despesa_documento(docs$codigo_documento[[1]])
+# As funções pt_* aceitam vetores e devolvem um único tibble: dos autores
+# (acentos são normalizados sozinhos) aos documentos SIAFI de cada emenda.
+pagamentos <- pt_emendas(2025, autor = camara_deputados(uf = "PE")$nome) |>
+  pull(codigo_emenda) |>
+  pt_emenda_documentos() |>
+  filter(fase == "Pagamento") |>
+  distinct(codigo_documento) |>
+  pull() |>
+  pt_despesa_documento()
+
+# Quem recebeu? (municípios com a grafia oficial via ibge_municipios();
+# CNPJs genéricos resolvidos com cnpj_municipio())
+pagamentos |>
+  count(nome_favorecido, uf_favorecido, wt = valor, sort = TRUE)
 
 # Tudo junto: uma linha por documento, com favorecido/UG/UO
 emendas_execucao(2025, autor = "NOME DO PARLAMENTAR")
