@@ -9,3 +9,4 @@
 ^build_site\.R$
 \.DS_Store$
 ^\.claude$
+^data-raw$

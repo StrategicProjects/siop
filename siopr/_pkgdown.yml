@@ -19,6 +19,8 @@ navbar:
       menu:
         - text: "Emendas parlamentares: do RDF do SIOP ao Portal da Transparência"
           href: articles/emendas.html
+        - text: "Em que municípios os deputados de Pernambuco aplicam suas emendas?"
+          href: articles/emendas-pe.html
 
 home:
   title: "siopr: Orçamento Federal (SIOP) e emendas parlamentares (Portal da Transparência) em tibbles"
