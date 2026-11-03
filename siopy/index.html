@@ -650,7 +650,7 @@
 <p><img alt="License" src="https://img.shields.io/badge/license-MIT-darkviolet.svg" />
 <img alt="" src="https://img.shields.io/badge/devel%20version-0.1.0-blue.svg" />
 <a href="https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml"><img alt="siopy" src="https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml/badge.svg" /></a>
-<a href="https://pypi.org/project/siopy/"><img alt="PyPI" src="https://img.shields.io/pypi/v/siopy.svg" /></a></p>
+<a href="https://pypi.org/project/siopy-br/"><img alt="PyPI" src="https://img.shields.io/pypi/v/siopy-br.svg" /></a></p>
 <!-- badges: end -->
 
 <p>Orçamento Federal e emendas parlamentares em <code>pandas</code>, a partir de <strong>fontes públicas</strong>:</p>
@@ -666,9 +666,14 @@
 Documentação: <a href="https://strategicprojects.github.io/siop/siopy/">https://strategicprojects.github.io/siop/siopy/</a> (site do monorepo:
 <a href="https://strategicprojects.github.io/siop/">https://strategicprojects.github.io/siop/</a>).</p>
 <h2 id="instalacao">Instalação<a class="headerlink" href="#instalacao" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>siopy<span class="w">            </span><span class="c1"># quando publicado no PyPI</span>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>siopy-br<span class="w">         </span><span class="c1"># o import continua: import siopy</span>
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span><span class="w">      </span><span class="c1"># desenvolvimento, a partir deste diretório</span>
 </code></pre></div>
+<blockquote>
+<p>No PyPI o pacote se chama <strong><code>siopy-br</code></strong> (o nome <code>siopy</code> é recusado por
+colidir com o projeto <code>slopy</code> na normalização do PyPI, que trata i≡l);
+o pacote importável segue sendo <code>siopy</code>, espelho do <code>siopr</code>.</p>
+</blockquote>
 <h2 id="uso">Uso<a class="headerlink" href="#uso" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">siopy</span>
 
