@@ -64,7 +64,8 @@ empenhado, liquidado, pago e de restos a pagar (inscrito, cancelado, pago).</p>
 <span>  numero <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  funcao <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subfuncao <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_paginas <span class="op">=</span> <span class="cn">Inf</span></span>
+<span>  max_paginas <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  .progress <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,9 +78,11 @@ empenhado, liquidado, pago e de restos a pagar (inscrito, cancelado, pago).</p>
 
 
 <dt id="arg-autor">autor<a class="anchor" aria-label="anchor" href="#arg-autor"></a></dt>
-<dd><p>Nome do parlamentar (busca textual da API). Acentos são
-removidos e o nome vai em maiúsculas automaticamente — a busca da API
-não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").</p></dd>
+<dd><p>Nome(s) de parlamentar (busca textual da API; um ou mais).
+Acentos são removidos e o nome vai em maiúsculas automaticamente — a
+busca da API não encontra nomes acentuados ("Túlio Gadêlha" vira
+"TULIO GADELHA"). Com vários autores, as buscas são feitas uma a uma e
+emendas repetidas (a busca é parcial) são deduplicadas pelo código.</p></dd>
 
 
 <dt id="arg-tipo">tipo<a class="anchor" aria-label="anchor" href="#arg-tipo"></a></dt>
@@ -92,6 +95,10 @@ não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").</p></dd
 
 <dt id="arg-max-paginas">max_paginas<a class="anchor" aria-label="anchor" href="#arg-max-paginas"></a></dt>
 <dd><p>Limite de páginas (15 registros cada). Padrão: todas.</p></dd>
+
+
+<dt id="arg--progress">.progress<a class="anchor" aria-label="anchor" href="#arg--progress"></a></dt>
+<dd><p>Mostrar barra de progresso quando houver mais de um item.</p></dd>
 
 </dl></div>
     <div class="section level2">

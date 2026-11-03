@@ -72,7 +72,7 @@
   </g>
 
   <!-- Package name -->
-  <text x="100" y="178" text-anchor="middle"
+  <text x="100" y="170" text-anchor="middle"
         font-family="'Fira Code', 'Courier New', monospace"
         font-size="23px" font-weight="700" fill="#ffffff"
         letter-spacing="2">siopr</text>

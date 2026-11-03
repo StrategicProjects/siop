@@ -56,13 +56,13 @@ em PORTAL_TRANSPARENCIA_API_KEY.
 - [`pt_emendas()`](https://strategicprojects.github.io/siop/reference/pt_emendas.md)
   : Emendas parlamentares (Portal da Transparência)
 - [`pt_emenda_documentos()`](https://strategicprojects.github.io/siop/reference/pt_emenda_documentos.md)
-  : Documentos de despesa ligados a uma emenda
+  : Documentos de despesa ligados a emendas
 - [`pt_despesa_documento()`](https://strategicprojects.github.io/siop/reference/pt_despesa_documento.md)
-  : Detalhe de um documento de despesa
+  : Detalhe de documentos de despesa
 - [`pt_documentos_relacionados()`](https://strategicprojects.github.io/siop/reference/pt_documentos_relacionados.md)
-  : Documentos relacionados a um documento de despesa
+  : Documentos relacionados a documentos de despesa
 - [`pt_favorecidos_finais()`](https://strategicprojects.github.io/siop/reference/pt_favorecidos_finais.md)
-  : Favorecidos finais de um documento de despesa
+  : Favorecidos finais de documentos de despesa
 - [`pt_set_key()`](https://strategicprojects.github.io/siop/reference/pt_set_key.md)
   [`pt_has_key()`](https://strategicprojects.github.io/siop/reference/pt_set_key.md)
   : Chave da API do Portal da Transparência

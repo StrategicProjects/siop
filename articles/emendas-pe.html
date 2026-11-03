@@ -121,19 +121,17 @@ exercício pelo estado.</p>
 <div class="section level2">
 <h2 id="passo-2-as-emendas-de-cada-um">Passo 2: as emendas de cada um<a class="anchor" aria-label="anchor" href="#passo-2-as-emendas-de-cada-um"></a>
 </h2>
-<p>A busca da API do Portal é textual e por isso
-<code><a href="../reference/pt_emendas.html">pt_emendas()</a></code> já remove os acentos do autor sozinho (“Túlio
-Gadêlha” → “TULIO GADELHA”); filtramos pela igualdade exata para não
-levar homônimos parciais junto.</p>
+<p><code><a href="../reference/pt_emendas.html">pt_emendas()</a></code> aceita um vetor de autores e devolve um
+único tibble; a busca da API é textual e por isso ela já remove os
+acentos sozinha (“Túlio Gadêlha” → “TULIO GADELHA”). O
+<code><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join()</a></code> pela forma normalizada do nome descarta
+homônimos parciais e traz de volta o nome bonito, acentuado.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">emendas</span> <span class="op">&lt;-</span> <span class="va">deputados</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">nome</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">nome</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="../reference/pt_emendas.html">pt_emendas</a></span><span class="op">(</span><span class="fl">2025</span>, autor <span class="op">=</span> <span class="va">nome</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">autor</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="fu"><a href="../reference/sem_acento.html">sem_acento</a></span><span class="op">(</span><span class="va">nome</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>deputado <span class="op">=</span> <span class="va">nome</span><span class="op">)</span></span>
-<span>  <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">emendas</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pt_emendas.html">pt_emendas</a></span><span class="op">(</span><span class="fl">2025</span>, autor <span class="op">=</span> <span class="va">deputados</span><span class="op">$</span><span class="va">nome</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span></span>
+<span>    <span class="va">deputados</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span>autor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">toupper</a></span><span class="op">(</span><span class="fu"><a href="../reference/sem_acento.html">sem_acento</a></span><span class="op">(</span><span class="va">nome</span><span class="op">)</span><span class="op">)</span>, deputado <span class="op">=</span> <span class="va">nome</span><span class="op">)</span>,</span>
+<span>    by <span class="op">=</span> <span class="st">"autor"</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">emendas</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 235</span></span></code></pre></div>
 <p>Dos 25, apenas Silvio Costa Filho (licenciado, hoje ministro) não tem
@@ -144,22 +142,18 @@ deputado.</p>
 <div class="section level2">
 <h2 id="passo-3-documento-a-documento">Passo 3: documento a documento<a class="anchor" aria-label="anchor" href="#passo-3-documento-a-documento"></a>
 </h2>
-<p>Dois níveis de consulta: os documentos de cada emenda e o detalhe de
-cada empenho. São ~2 mil requisições; o pacote respeita sozinho o limite
-de 90 por minuto do Portal, então a célula abaixo leva cerca de meia
-hora.</p>
+<p>Dois níveis de consulta, e os dois aceitam vetores: os documentos de
+cada emenda e o detalhe de cada empenho. São ~2 mil requisições; o
+pacote mostra o progresso e respeita sozinho o limite de 90 por minuto
+do Portal, então a célula abaixo leva cerca de meia hora.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">documentos</span> <span class="op">&lt;-</span> <span class="va">emendas</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">codigo_emenda</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">pt_emenda_documentos</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">documentos</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pt_emenda_documentos.html">pt_emenda_documentos</a></span><span class="op">(</span><span class="va">emendas</span><span class="op">$</span><span class="va">codigo_emenda</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">empenhos</span> <span class="op">&lt;-</span> <span class="va">documentos</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">fase</span> <span class="op">==</span> <span class="st">"Empenho"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">codigo_documento</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">pt_despesa_documento</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/pt_despesa_documento.html">pt_despesa_documento</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>documentos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">documentos</span><span class="op">)</span>, empenhos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">empenhos</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; documentos   empenhos</span></span>

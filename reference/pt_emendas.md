@@ -16,7 +16,8 @@ pt_emendas(
   numero = NULL,
   funcao = NULL,
   subfuncao = NULL,
-  max_paginas = Inf
+  max_paginas = Inf,
+  .progress = TRUE
 )
 ```
 
@@ -28,9 +29,11 @@ pt_emendas(
 
 - autor:
 
-  Nome do parlamentar (busca textual da API). Acentos são removidos e o
-  nome vai em maiúsculas automaticamente — a busca da API não encontra
-  nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").
+  Nome(s) de parlamentar (busca textual da API; um ou mais). Acentos são
+  removidos e o nome vai em maiúsculas automaticamente — a busca da API
+  não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").
+  Com vários autores, as buscas são feitas uma a uma e emendas repetidas
+  (a busca é parcial) são deduplicadas pelo código.
 
 - tipo:
 
@@ -44,6 +47,10 @@ pt_emendas(
 - max_paginas:
 
   Limite de páginas (15 registros cada). Padrão: todas.
+
+- .progress:
+
+  Mostrar barra de progresso quando houver mais de um item.
 
 ## Value
 

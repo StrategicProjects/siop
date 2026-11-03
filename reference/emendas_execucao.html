@@ -78,9 +78,11 @@ respeitado automaticamente.</p>
 
 
 <dt id="arg-autor">autor<a class="anchor" aria-label="anchor" href="#arg-autor"></a></dt>
-<dd><p>Nome do parlamentar (busca textual da API). Acentos são
-removidos e o nome vai em maiúsculas automaticamente — a busca da API
-não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").</p></dd>
+<dd><p>Nome(s) de parlamentar (busca textual da API; um ou mais).
+Acentos são removidos e o nome vai em maiúsculas automaticamente — a
+busca da API não encontra nomes acentuados ("Túlio Gadêlha" vira
+"TULIO GADELHA"). Com vários autores, as buscas são feitas uma a uma e
+emendas repetidas (a busca é parcial) são deduplicadas pelo código.</p></dd>
 
 
 <dt id="arg-tipo">tipo<a class="anchor" aria-label="anchor" href="#arg-tipo"></a></dt>
