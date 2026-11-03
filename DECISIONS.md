@@ -65,7 +65,15 @@ apenas com `SIOPR_LIVE=true` / `SIOPY_LIVE=true` (e a chave, para `pt_*`).
 R: httr2, tibble, readr, cli, rlang (Suggests: testthat, knitr). Python: httpx, pandas,
 platformdirs (dev: pytest, respx). Sem rdflib/SPARQLWrapper — parse direto do CSV/JSON.
 
-## 2026-11-03 · Pendência: desempenho da consulta completa por órgão
+## 2026-11-03 · RESOLVIDO: desempenho da consulta completa por órgão
+
+Medido em 2026-11-03 via pacote (não navegador): `siop_emendas(2025, tipo = c("individual",
+"bancada"), orgao = "26000")` → 5.956 linhas em 20,4 s; `siop_orcamento(2025, orgao = "26000")`
+→ 127.970 linhas em 91,3 s, ponta a ponta, sem timeout. O >45 s observado no navegador não se
+reproduz no cliente. Desempenho aceitável; as mitigações (a)/(b) abaixo ficam como opções
+futuras, não necessárias.
+
+## 2026-11-03 · (histórico) Pendência: desempenho da consulta completa por órgão
 
 O template `orcamento.rq` (42 colunas, com rótulos de todos os classificadores) foi validado
 ponta a ponta com `LIMIT 5` e com os filtros `FILTER(?cod_rp IN (...))`. A execução sem LIMIT

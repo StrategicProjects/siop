@@ -9,7 +9,14 @@ description = "Brazilian federal budget (SIOP open data) and parliamentary amend
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
-authors = [{ name = "André Leite", email = "leite@castlab.org" }]
+authors = [
+  { name = "André Leite", email = "leite@castlab.org" },
+  { name = "Marcos Wasiliew", email = "marcos.wasiliew@gmail.com" },
+  { name = "Hugo Vasconcelos", email = "hugo.vasconcelos@ufpe.br" },
+  { name = "Carlos Amorim", email = "carlos.agaf@ufpe.br" },
+  { name = "Diogo Bezerra", email = "diogo.bezerra@ufpe.br" },
+  { name = "Júlia Nascimento Barreto", email = "juliabarreto@gd.seplag.pe.gov.br" },
+]
 keywords = [
   "orçamento",
   "SIOP",

@@ -22,7 +22,11 @@ jobs:
         include:
           - {os: ubuntu-latest, r: release}
           - {os: ubuntu-latest, r: oldrel-1}
-          - {os: ubuntu-latest, r: "4.1"}
+          # Em R 4.1 os Suggests de vinheta (ggplot2/geobr atuais) não têm
+          # solução; os chunks são eval=FALSE, então o check dispensa ambos
+          # (_R_CHECK_FORCE_SUGGESTS_=false).
+          - {os: ubuntu-latest, r: "4.1",
+             deps: 'c("hard", "Config/Needs/check41")'}
           - {os: windows-latest, r: release}
           - {os: macos-latest, r: release}
     env:
@@ -40,6 +44,7 @@ jobs:
           working-directory: siopr
           extra-packages: any::rcmdcheck
           needs: check
+          dependencies: ${{ matrix.deps || '"all"' }}
       - uses: r-lib/actions/check-r-package@v2
         with:
           working-directory: siopr
