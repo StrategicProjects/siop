@@ -1,0 +1,175 @@
+# siopr
+
+Orçamento Federal e emendas parlamentares em tibbles, a partir de
+**fontes públicas** (sem credencial do SIOP):
+
+- **SIOP Dados Abertos** (SOF/MPO) — endpoint SPARQL do RDF da LOA
+  (2001–2026, com execução) e CSVs oficiais (cadastro de ações,
+  créditos, acompanhamento físico, regionalização).
+- **Portal da Transparência** (CGU) — API REST de emendas (autor,
+  número, valores) e documentos de despesa (empenhos, pagamentos,
+  favorecidos). Chave gratuita:
+  <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
+
+Pacote irmão em Python:
+[`siopy`](https://strategicprojects.github.io/siopy). Documentação:
+<https://strategicprojects.github.io/siop/>.
+
+## Instalação
+
+``` r
+
+# quando publicado no CRAN
+install.packages("siopr")
+
+# versão de desenvolvimento
+# install.packages("pak")
+pak::pak("StrategicProjects/siop/siopr")
+```
+
+## Uso
+
+``` r
+
+library(siopr)
+
+# Emendas na LOA 2025 (RP 6 = individuais, 7 = bancada, 8 = comissão, 9 = relator)
+em <- siop_emendas(2025, tipo = c("individual", "bancada"))
+dplyr::summarise(em, dplyr::across(c(loa, empenhado, pago), sum), .by = tipo_emenda)
+
+# Só o Ministério da Saúde, função 10
+siop_emendas(2025, tipo = "individual", orgao = "36000", funcao = "10")
+
+# Orçamento inteiro de um órgão (qualquer RP)
+siop_orcamento(2025, orgao = "26000")
+
+# Última carga do RDF
+siop_ultima_atualizacao()
+
+# SPARQL cru
+siop_sparql("SELECT ?exercicio ?d WHERE { GRAPH ?g { ?e a loa:Exercicio ;
+  loa:identificador ?exercicio ; loa:dataUltimaAtualizacao ?d } }")
+
+# CSVs oficiais (cache em disco; refresh = TRUE para rebaixar)
+siop_cadastro_acoes(2025, "localizadores")
+siop_creditos(2025)
+siop_catalogo()
+
+# Portal da Transparência — Sys.setenv(PORTAL_TRANSPARENCIA_API_KEY = "...")
+pt   <- pt_emendas(2025, autor = "NOME DO PARLAMENTAR")
+docs <- pt_emenda_documentos(pt$codigo_emenda[[1]])
+det  <- pt_despesa_documento(docs$codigo_documento[[1]])
+
+# Tudo junto: uma linha por documento, com favorecido/UG/UO
+emendas_execucao(2025, autor = "NOME DO PARLAMENTAR")
+```
+
+Colunas em `snake_case`, códigos como texto (zeros à esquerda
+preservados), valores em R\$ numéricos. O RDF do SIOP **não** traz autor
+nem número de emenda — isso vem do Portal da Transparência:
+
+![Como as duas fontes se completam](reference/figures/fluxo-emendas.svg)
+
+## Arquitetura
+
+![Arquitetura de siopr/siopy](reference/figures/architecture.svg)
+
+## Atualização das fontes
+
+| Fonte | Periodicidade | Como verificar |
+|----|----|----|
+| RDF/SPARQL SIOP | recarga a cada poucos dias (exercício corrente); anteriores reprocessados periodicamente | [`siop_ultima_atualizacao()`](https://strategicprojects.github.io/siop/reference/siop_exercicios.md) |
+| CSVs SIOP | publicações pontuais (data no nome do arquivo) | [`siop_catalogo()`](https://strategicprojects.github.io/siop/reference/siop_catalogo.md) |
+| PT – Tesouro Gerencial (emendas, despesas) | diária | página *Origem dos Dados* |
+| PT – Apoios/Solicitações (SLCN) | semanal | idem |
+
+## Testes
+
+``` r
+
+devtools::test()                               # offline, com fixtures
+Sys.setenv(SIOPR_LIVE = "true"); devtools::test()  # inclui chamadas reais
+```
+
+# Package index
+
+## Emendas e orçamento (SPARQL)
+
+Linhas da LOA com classificação completa e execução, direto do RDF do
+SIOP. Emendas são as linhas com Resultado Primário 6, 7, 8 ou 9.
+
+- [`siop_emendas()`](https://strategicprojects.github.io/siop/reference/siop_emendas.md)
+  : Dotações de emendas parlamentares na LOA (RP 6/7/8/9)
+- [`siop_orcamento()`](https://strategicprojects.github.io/siop/reference/siop_orcamento.md)
+  : Linhas de despesa do Orçamento Federal (RDF do SIOP)
+- [`tipo_emenda_rp`](https://strategicprojects.github.io/siop/reference/tipo_emenda_rp.md)
+  : Tipos de emenda e seus códigos de Resultado Primário (RP)
+- [`siop_sparql()`](https://strategicprojects.github.io/siop/reference/siop_sparql.md)
+  : Executar uma consulta SPARQL no endpoint do SIOP
+- [`siop_montar_query()`](https://strategicprojects.github.io/siop/reference/siop_montar_query.md)
+  : Montar a consulta SPARQL do orçamento
+
+## Metadados do RDF
+
+Órgãos, exercícios disponíveis e data da última carga.
+
+- [`siop_orgaos()`](https://strategicprojects.github.io/siop/reference/siop_orgaos.md)
+  : Órgãos orçamentários presentes no grafo de um exercício
+- [`siop_exercicios()`](https://strategicprojects.github.io/siop/reference/siop_exercicios.md)
+  [`siop_ultima_atualizacao()`](https://strategicprojects.github.io/siop/reference/siop_exercicios.md)
+  : Exercícios disponíveis e data da última carga do RDF
+
+## CSVs oficiais do SIOP
+
+Tudo que está publicado na página de Dados Abertos, com cache em disco.
+
+- [`siop_catalogo()`](https://strategicprojects.github.io/siop/reference/siop_catalogo.md)
+  : Catálogo dos arquivos publicados nos Dados Abertos do SIOP
+- [`siop_parse_catalogo()`](https://strategicprojects.github.io/siop/reference/siop_parse_catalogo.md)
+  : Interpretar o HTML da página de Dados Abertos
+- [`siop_download()`](https://strategicprojects.github.io/siop/reference/siop_download.md)
+  : Baixar um arquivo dos Dados Abertos (com cache em disco)
+- [`siop_cadastro_acoes()`](https://strategicprojects.github.io/siop/reference/siop_cadastro_acoes.md)
+  : Cadastro de ações, localizadores e planos orçamentários (CSV
+  oficial)
+- [`siop_creditos()`](https://strategicprojects.github.io/siop/reference/siop_creditos.md)
+  : Alterações orçamentárias (créditos) de um exercício
+- [`siop_acompanhamento()`](https://strategicprojects.github.io/siop/reference/siop_acompanhamento.md)
+  : Acompanhamento físico-financeiro das ações (CSV anual)
+- [`siop_regionalizacao()`](https://strategicprojects.github.io/siop/reference/siop_regionalizacao.md)
+  : Regionalização das ações do Orçamento Federal
+- [`siop_cache_dir()`](https://strategicprojects.github.io/siop/reference/siop_cache_dir.md)
+  : Diretório de cache dos downloads
+
+## Portal da Transparência
+
+Emendas por autor e documentos de despesa (SIAFI). Requer chave gratuita
+em PORTAL_TRANSPARENCIA_API_KEY.
+
+- [`pt_emendas()`](https://strategicprojects.github.io/siop/reference/pt_emendas.md)
+  : Emendas parlamentares (Portal da Transparência)
+- [`pt_emenda_documentos()`](https://strategicprojects.github.io/siop/reference/pt_emenda_documentos.md)
+  : Documentos de despesa ligados a uma emenda
+- [`pt_despesa_documento()`](https://strategicprojects.github.io/siop/reference/pt_despesa_documento.md)
+  : Detalhe de um documento de despesa
+- [`pt_documentos_relacionados()`](https://strategicprojects.github.io/siop/reference/pt_documentos_relacionados.md)
+  : Documentos relacionados a um documento de despesa
+- [`pt_favorecidos_finais()`](https://strategicprojects.github.io/siop/reference/pt_favorecidos_finais.md)
+  : Favorecidos finais de um documento de despesa
+- [`pt_set_key()`](https://strategicprojects.github.io/siop/reference/pt_set_key.md)
+  [`pt_has_key()`](https://strategicprojects.github.io/siop/reference/pt_set_key.md)
+  : Chave da API do Portal da Transparência
+
+## Cruzamento
+
+SIOP × Portal: uma linha por documento de despesa.
+
+- [`emendas_execucao()`](https://strategicprojects.github.io/siop/reference/emendas_execucao.md)
+  : Emendas com seus documentos e favorecidos (uma linha por documento)
+
+# Articles
+
+### All vignettes
+
+- [Emendas parlamentares: do RDF do SIOP ao Portal da
+  Transparência](https://strategicprojects.github.io/siop/articles/emendas.md):

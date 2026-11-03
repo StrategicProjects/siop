@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 560" width="940" height="560"
+     role="img" aria-labelledby="fluxo-title fluxo-desc"
+     font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="fluxo-title">Como as duas fontes se completam</title>
+  <desc id="fluxo-desc">O RDF do SIOP tem a dotação e a execução das emendas,
+  mas não o autor; o Portal da Transparência tem o autor, o número e os
+  documentos. emendas_execucao() junta os dois lados em uma linha por
+  documento de despesa.</desc>
+
+  <defs>
+    <marker id="farrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#5D7287"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="560" rx="16" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+
+  <g fill="none" stroke="#2C7DA0" stroke-width="1" opacity="0.06">
+    <path d="M0 48H940M0 96H940M0 144H940M0 192H940M0 240H940M0 288H940M0 336H940M0 384H940M0 432H940M0 480H940M0 528H940M48 0V560M96 0V560M144 0V560M192 0V560M240 0V560M288 0V560M336 0V560M384 0V560M432 0V560M480 0V560M528 0V560M576 0V560M624 0V560M672 0V560M720 0V560M768 0V560M816 0V560M864 0V560M912 0V560"/>
+  </g>
+
+  <text x="470" y="46" text-anchor="middle" fill="#0E3A53" font-size="17" font-weight="700">
+    emendas parlamentares — duas fontes, dois recortes
+  </text>
+
+  <!-- fonte SIOP -->
+  <rect x="60" y="70" width="400" height="188" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.5"/>
+  <text x="260" y="96" text-anchor="middle" fill="#0E3A53" font-size="14.5" font-weight="700">SIOP — RDF da LOA (SPARQL)</text>
+  <text x="260" y="120" text-anchor="middle" fill="#4A6076" font-size="11.5">emenda = linha com Resultado Primário</text>
+  <text x="260" y="138" text-anchor="middle" fill="#4A6076" font-size="11.5">6 individual · 7 bancada · 8 comissão · 9 relator</text>
+  <text x="260" y="162" text-anchor="middle" fill="#4A6076" font-size="11.5">classificação completa: órgão, UO, função,</text>
+  <text x="260" y="180" text-anchor="middle" fill="#4A6076" font-size="11.5">programa, ação, localizador, GND, fonte…</text>
+  <text x="260" y="204" text-anchor="middle" fill="#4A6076" font-size="11.5">valores: PLOA, LOA, lei + créditos,</text>
+  <text x="260" y="222" text-anchor="middle" fill="#4A6076" font-size="11.5">empenhado, liquidado, pago</text>
+  <text x="260" y="246" text-anchor="middle" fill="#B3261E" font-size="11.5" font-weight="600">não diz quem é o autor nem o número</text>
+
+  <!-- fonte Portal -->
+  <rect x="480" y="70" width="400" height="188" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.5"/>
+  <text x="680" y="96" text-anchor="middle" fill="#0E3A53" font-size="14.5" font-weight="700">Portal da Transparência — API REST</text>
+  <text x="680" y="120" text-anchor="middle" fill="#4A6076" font-size="11.5">pt_emendas(): autor, número da emenda,</text>
+  <text x="680" y="138" text-anchor="middle" fill="#4A6076" font-size="11.5">valores por emenda e por exercício</text>
+  <text x="680" y="162" text-anchor="middle" fill="#4A6076" font-size="11.5">pt_emenda_documentos(): os empenhos,</text>
+  <text x="680" y="180" text-anchor="middle" fill="#4A6076" font-size="11.5">liquidações e pagamentos (SIAFI) da emenda</text>
+  <text x="680" y="204" text-anchor="middle" fill="#4A6076" font-size="11.5">pt_despesa_documento(): favorecido, UG,</text>
+  <text x="680" y="222" text-anchor="middle" fill="#4A6076" font-size="11.5">UO e detalhe de cada documento</text>
+  <text x="680" y="246" text-anchor="middle" fill="#B3261E" font-size="11.5" font-weight="600">não traz a classificação orçamentária completa</text>
+
+  <g fill="none" stroke="#5D7287" stroke-width="2" stroke-linejoin="round">
+    <path d="M260 258V296"/>
+    <path d="M680 258V296"/>
+    <path d="M260 296H680"/>
+    <path d="M470 296V324" marker-end="url(#farrow)"/>
+  </g>
+
+  <text x="300" y="286" text-anchor="middle" fill="#5D7287" font-size="11">dotação e execução</text>
+  <text x="648" y="286" text-anchor="middle" fill="#5D7287" font-size="11">autor e documentos</text>
+
+  <!-- junção -->
+  <rect x="190" y="328" width="560" height="96" rx="10" fill="#F4F8FB" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="470" y="354" text-anchor="middle" fill="#0E3A53" font-size="14.5" font-weight="700">emendas_execucao(ano, autor)</text>
+  <text x="470" y="378" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    para cada emenda do autor, busca os documentos e o detalhe de cada um,
+  </text>
+  <text x="470" y="396" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    com barra de progresso (cli / stderr) e respeitando o rate limit do Portal
+  </text>
+  <text x="470" y="416" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">
+    o cruzamento com o RDF usa a classificação funcional-programática
+  </text>
+
+  <path d="M470 424V452" stroke="#5D7287" stroke-width="2" marker-end="url(#farrow)"/>
+
+  <!-- resultado -->
+  <rect x="100" y="456" width="740" height="66" rx="10" fill="#EDF3F9" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="470" y="482" text-anchor="middle" fill="#0E3A53" font-size="13.5" font-weight="700">
+    uma linha por documento de despesa
+  </text>
+  <text x="470" y="504" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    autor · número da emenda · fase (empenho/liquidação/pagamento) · valor · favorecido · UG · UO · data
+  </text>
+</svg>
