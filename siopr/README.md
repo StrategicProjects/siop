@@ -1,4 +1,11 @@
-# siopr
+# siopr <img src="man/figures/logo.svg" align="right" height="139" />
+
+<!-- badges: start -->
+![License](https://img.shields.io/badge/license-MIT-darkviolet.svg)
+![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)
+[![R-CMD-check](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/siopr)](https://CRAN.R-project.org/package=siopr)
+<!-- badges: end -->
 
 Orçamento Federal e emendas parlamentares em tibbles, a partir de **fontes públicas**
 (sem credencial do SIOP):
@@ -9,13 +16,18 @@ Orçamento Federal e emendas parlamentares em tibbles, a partir de **fontes púb
   de despesa (empenhos, pagamentos, favorecidos). Chave gratuita:
   <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
 
-Pacote irmão em Python: [`siopy`](../siopy).
+Pacote irmão em Python: [`siopy`](../siopy). Documentação:
+<https://strategicprojects.github.io/siop/>.
 
 ## Instalação
 
 ```r
+# quando publicado no CRAN
+install.packages("siopr")
+
+# versão de desenvolvimento
 # install.packages("pak")
-pak::pak("castlab/siop-sdk/siopr")
+pak::pak("StrategicProjects/siop/siopr")
 ```
 
 ## Uso
@@ -56,7 +68,13 @@ emendas_execucao(2025, autor = "NOME DO PARLAMENTAR")
 
 Colunas em `snake_case`, códigos como texto (zeros à esquerda preservados), valores em R$
 numéricos. O RDF do SIOP **não** traz autor nem número de emenda — isso vem do Portal da
-Transparência.
+Transparência:
+
+<p align="center"><img src="man/figures/fluxo-emendas.svg" width="90%" alt="Como as duas fontes se completam"/></p>
+
+## Arquitetura
+
+<p align="center"><img src="man/figures/architecture.svg" width="90%" alt="Arquitetura de siopr/siopy"/></p>
 
 ## Atualização das fontes
 

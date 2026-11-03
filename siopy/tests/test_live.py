@@ -1,11 +1,14 @@
 """Testes ao vivo (opt-in): SIOPY_LIVE=true pytest tests/test_live.py"""
+
 import os
 
 import pytest
 
 import siopy
 
-live = pytest.mark.skipif(os.environ.get("SIOPY_LIVE", "").lower() != "true", reason="SIOPY_LIVE != true")
+live = pytest.mark.skipif(
+    os.environ.get("SIOPY_LIVE", "").lower() != "true", reason="SIOPY_LIVE != true"
+)
 
 
 @live

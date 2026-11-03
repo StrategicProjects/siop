@@ -1,32 +1,42 @@
 Package: siopr
-Title: Orçamento Federal (SIOP Dados Abertos) e Emendas Parlamentares (Portal da Transparência)
+Title: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments
+    ('Portal da Transparencia') Open Data
 Version: 0.1.0
-Authors@R: 
-    person("André", "Leite", , "leite@castlab.org", role = c("aut", "cre"))
-Description: Acesso, em tibbles, a fontes públicas do orçamento federal brasileiro:
-    o endpoint SPARQL e os arquivos CSV dos Dados Abertos do SIOP (Secretaria de
-    Orçamento Federal), incluindo as dotações de emendas parlamentares (RP 6/7/8/9),
-    e a API REST do Portal da Transparência (CGU) para emendas por autor e os
-    documentos de despesa associados. Nenhuma credencial do SIOP é necessária.
+Authors@R:
+    person("André", "Leite", email = "leite@castlab.org", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-4718-9766"))
+Description: Tidyverse-friendly access to public sources of the Brazilian
+    federal budget: the SPARQL endpoint and the official CSV files of the
+    'SIOP' open data portal (Federal Budget Secretariat, SOF/MPO)
+    <https://www1.siop.planejamento.gov.br/>, including the budget lines of
+    parliamentary amendments (primary result codes 6, 7, 8 and 9) with
+    their full classification and execution values, and the REST API of the
+    'Portal da Transparencia' (CGU)
+    <https://api.portaldatransparencia.gov.br/> for amendments by author
+    and their expense documents. No 'SIOP' credential is required; the
+    'Portal da Transparencia' needs a free API key. Results are tibbles,
+    with codes as text and monetary values as numbers.
 License: MIT + file LICENSE
+URL: https://strategicprojects.github.io/siop/,
+    https://github.com/StrategicProjects/siop
+BugReports: https://github.com/StrategicProjects/siop/issues
 Encoding: UTF-8
 Language: pt-BR
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-Depends: 
+Depends:
     R (>= 4.1)
-Imports: 
+Imports:
     cli,
     httr2 (>= 1.0.0),
     readr,
     rlang,
     tibble
-Suggests: 
+Suggests:
     dplyr,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/castlab/siop-sdk
-BugReports: https://github.com/castlab/siop-sdk/issues
+Config/roxygen2/version: 8.0.0

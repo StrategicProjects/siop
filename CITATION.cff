@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "siop: Brazilian federal budget (SIOP open data) and parliamentary amendments (Portal da Transparência) from R and Python"
+version: 0.1.0
+date-released: 2026-11-03
+license: MIT
+repository-code: "https://github.com/StrategicProjects/siop"
+url: "https://strategicprojects.github.io/siop/"
+keywords:
+  - orçamento federal
+  - SIOP
+  - emendas parlamentares
+  - Portal da Transparência
+  - SPARQL
+  - open data
+  - Brazil
+  - R
+  - Python
+authors:
+  - family-names: Leite
+    given-names: "André"
+    email: leite@castlab.org
+    affiliation: "Universidade Federal de Pernambuco"
+    orcid: "https://orcid.org/0000-0002-4718-9766"

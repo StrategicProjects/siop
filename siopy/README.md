@@ -1,4 +1,11 @@
-# siopy
+# siopy <img src="https://raw.githubusercontent.com/StrategicProjects/siop/main/siopy/docs/figures/logo.svg" align="right" height="139" />
+
+<!-- badges: start -->
+![License](https://img.shields.io/badge/license-MIT-darkviolet.svg)
+![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)
+[![siopy](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml)
+[![PyPI](https://img.shields.io/pypi/v/siopy.svg)](https://pypi.org/project/siopy/)
+<!-- badges: end -->
 
 Orçamento Federal e emendas parlamentares em `pandas`, a partir de **fontes públicas**:
 
@@ -9,12 +16,13 @@ Orçamento Federal e emendas parlamentares em `pandas`, a partir de **fontes pú
   valores por emenda) e documentos de despesa (empenhos, pagamentos, favorecidos).
   Requer chave gratuita: <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
 
-Pacote irmão em R: [`siopr`](../siopr).
+Pacote irmão em R: [`siopr`](https://github.com/StrategicProjects/siop/tree/main/siopr).
+Documentação: <https://strategicprojects.github.io/siop/>.
 
 ## Instalação
 
 ```bash
-pip install siopy            # quando publicado
+pip install siopy            # quando publicado no PyPI
 pip install -e ".[dev]"      # desenvolvimento, a partir deste diretório
 ```
 
@@ -42,7 +50,7 @@ siopy.siop_sparql("PREFIX loa: <http://vocab.e.gov.br/2013/09/loa#> SELECT ... "
 # CSVs oficiais (cache em disco; refresh=True para baixar de novo)
 siopy.siop_cadastro_acoes(2025, "localizadores")
 siopy.siop_creditos(2025)
-siopy.siop_catalogo()          # tudo que está publicado na página de Dados Abertos
+siopy.siop_catalogo()  # tudo que está publicado na página de Dados Abertos
 
 # Portal da Transparência — export PORTAL_TRANSPARENCIA_API_KEY=...
 pt = siopy.pt_emendas(2025, autor="NOME DO PARLAMENTAR")
@@ -55,7 +63,13 @@ siopy.emendas_execucao(2025, autor="NOME DO PARLAMENTAR")
 
 Colunas em `snake_case`, códigos como texto (zeros à esquerda preservados), valores em R$ como
 `float`. O RDF do SIOP **não** traz autor nem número de emenda — isso vem do Portal da
-Transparência.
+Transparência:
+
+<p align="center"><img src="https://raw.githubusercontent.com/StrategicProjects/siop/main/siopr/man/figures/fluxo-emendas.svg" width="90%" alt="Como as duas fontes se completam"/></p>
+
+## Arquitetura
+
+<p align="center"><img src="https://raw.githubusercontent.com/StrategicProjects/siop/main/siopr/man/figures/architecture.svg" width="90%" alt="Arquitetura de siopr/siopy"/></p>
 
 ## Atualização das fontes
 

@@ -1,0 +1,49 @@
+# Publica o siopy no PyPI via trusted publishing (OIDC, sem token).
+# Roda em tags siopy-v* (ex.: siopy-v0.1.0) ou manualmente.
+name: pypi
+
+on:
+  push:
+    tags: ["siopy-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: siopy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*
+      - run: pip install dist/*.whl && python -I -c "import siopy; print(siopy.__version__)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: siopy/dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      # Ação Docker: a imagem é resolvida pelo git ref, então pin por SHA
+      # falha com "manifest unknown" — use a tag de release (prática
+      # documentada pela PyPA).
+      - uses: pypa/gh-action-pypi-publish@v1.14.2
+        with:
+          skip-existing: true

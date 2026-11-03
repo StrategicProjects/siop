@@ -4,20 +4,28 @@
 \name{siopr-package}
 \alias{siopr}
 \alias{siopr-package}
-\title{siopr: Orçamento Federal (SIOP Dados Abertos) e Emendas Parlamentares (Portal da Transparência)}
+\title{siopr: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments ('Portal da Transparencia') Open Data}
 \description{
-Acesso, em tibbles, a fontes públicas do orçamento federal brasileiro: o endpoint SPARQL e os arquivos CSV dos Dados Abertos do SIOP (Secretaria de Orçamento Federal), incluindo as dotações de emendas parlamentares (RP 6/7/8/9), e a API REST do Portal da Transparência (CGU) para emendas por autor e os documentos de despesa associados. Nenhuma credencial do SIOP é necessária.
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
+Tidyverse-friendly access to public sources of the Brazilian federal budget: the SPARQL endpoint and the official CSV files of the 'SIOP' open data portal (Federal Budget Secretariat, SOF/MPO) \url{https://www1.siop.planejamento.gov.br/}, including the budget lines of parliamentary amendments (primary result codes 6, 7, 8 and 9) with their full classification and execution values, and the REST API of the 'Portal da Transparencia' (CGU) \url{https://api.portaldatransparencia.gov.br/} for amendments by author and their expense documents. No 'SIOP' credential is required; the 'Portal da Transparencia' needs a free API key. Results are tibbles, with codes as text and monetary values as numbers.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/castlab/siop-sdk}
-  \item Report bugs at \url{https://github.com/castlab/siop-sdk/issues}
+  \item \url{https://strategicprojects.github.io/siop/}
+  \item \url{https://github.com/StrategicProjects/siop}
+  \item Report bugs at \url{https://github.com/StrategicProjects/siop/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: André Leite \email{leite@castlab.org}
+\strong{Maintainer}: André Leite \email{leite@castlab.org} (\href{https://orcid.org/0000-0002-4718-9766}{ORCID})
+
+Authors:
+\itemize{
+  \item André Leite \email{leite@castlab.org} (\href{https://orcid.org/0000-0002-4718-9766}{ORCID})
+}
 
 }
 \keyword{internal}

@@ -6,6 +6,7 @@ from collections.abc import Sequence
 
 import pandas as pd
 
+from . import _msg
 from ._http import make_client
 from .sparql import GRAPH_BASE, PREFIXES, sparql, sparql_template
 
@@ -108,7 +109,9 @@ def siop_orcamento(
         if not particionar:
             return _tidy(sparql(montar_query(exercicio, **filtros), client=client))
         partes = []
-        for cod in siop_orgaos(exercicio, client=client)["cod_orgao"]:
+        orgaos = list(siop_orgaos(exercicio, client=client)["cod_orgao"])
+        for i, cod in enumerate(orgaos, 1):
+            _msg.progress(i, len(orgaos), "Consultando órgãos")
             f = dict(filtros)
             f["orgao"] = cod
             partes.append(sparql(montar_query(exercicio, **f), client=client))

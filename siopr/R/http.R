@@ -7,7 +7,7 @@
 NULL
 
 siopr_user_agent <- function() {
-  paste0("siopr/", utils::packageVersion("siopr"), " (+https://github.com/castlab/siop-sdk)")
+  paste0("siopr/", utils::packageVersion("siopr"), " (+https://github.com/StrategicProjects/siop)")
 }
 
 # Requisicao base com retries (429/5xx e falhas de transporte) e User-Agent.

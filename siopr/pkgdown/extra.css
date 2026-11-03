@@ -1,0 +1,39 @@
+/* Tables: brand-blue header, zebra rows, soft frame.
+   Selectors are class-qualified (table.table ...) so they beat Bootstrap's
+   `.table > :not(caption) > * > *`, and the cell background variable is
+   cleared so the row backgrounds below can show through. */
+main table.table {
+  --bs-table-bg: transparent;
+  width: 100%;
+  margin: 1.25rem 0 1.75rem;
+  font-size: 0.925rem;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+main table.table th,
+main table.table td {
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--bs-border-color, #dbe2e8);
+  vertical-align: top;
+}
+
+main table.table thead th {
+  background: #0e3a53;
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: none;
+}
+
+main table.table thead th:first-child { border-top-left-radius: 0.5rem; }
+main table.table thead th:last-child  { border-top-right-radius: 0.5rem; }
+
+main table.table tbody tr:nth-child(even) td { background: rgba(44, 125, 160, 0.07); }
+main table.table tbody tr:hover td           { background: rgba(44, 125, 160, 0.14); }
+main table.table tbody tr:last-child td      { border-bottom: none; }
+
+main table.table thead th code { color: inherit; background: transparent; }
+
+[data-bs-theme="dark"] main table.table thead th { background: #14496a; }
+[data-bs-theme="dark"] main table.table tbody tr:nth-child(even) td { background: rgba(44, 125, 160, 0.12); }
+[data-bs-theme="dark"] main table.table tbody tr:hover td { background: rgba(44, 125, 160, 0.22); }

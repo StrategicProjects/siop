@@ -1,4 +1,12 @@
-# siop-sdk — `siopr` (R) e `siopy` (Python)
+# siop — orçamento federal e emendas parlamentares
+
+<!-- badges: start -->
+![License](https://img.shields.io/badge/license-MIT-darkviolet.svg)
+[![R-CMD-check](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopr.yaml)
+[![siopy](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml/badge.svg)](https://github.com/StrategicProjects/siop/actions/workflows/siopy.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/siopr)](https://CRAN.R-project.org/package=siopr)
+[![PyPI](https://img.shields.io/pypi/v/siopy.svg)](https://pypi.org/project/siopy/)
+<!-- badges: end -->
 
 Pacotes irmãos, com a mesma superfície, para obter **emendas parlamentares e o orçamento
 federal** a partir de fontes públicas:
@@ -8,8 +16,13 @@ federal** a partir de fontes públicas:
 | `siop_*` | SIOP Dados Abertos (SOF/MPO): endpoint SPARQL do RDF da LOA + CSVs oficiais | nenhuma |
 | `pt_*` | API REST do Portal da Transparência (CGU): emendas por autor, documentos de despesa | chave gratuita (`PORTAL_TRANSPARENCIA_API_KEY`) |
 
+| Pacote | Linguagem | Instalação | Docs |
+| --- | --- | --- | --- |
+| [`siopr`](siopr/) | R (tibbles, httr2) | CRAN (em preparação): `pak::pak("StrategicProjects/siop/siopr")` | [site](https://strategicprojects.github.io/siop/), [README](siopr/README.md), [NEWS](siopr/NEWS.md) |
+| [`siopy`](siopy/) | Python (pandas, httpx) | PyPI (em preparação): `pip install siopy` | [README](siopy/README.md), [NEWS](siopy/NEWS.md) |
+
 ```
-siop-sdk/
+siop/
 ├── siopr/        pacote R   (httr2 + tibble)      — R CMD check OK, 28 testes
 ├── siopy/        pacote Python (httpx + pandas)   — 23 testes (+4 live opt-in)
 ├── fixtures/     amostras reais (SPARQL) e sintéticas (Portal) usadas nos testes
@@ -32,6 +45,14 @@ siop-sdk/
 | `pt_despesa_documento(codigo)`, `pt_documentos_relacionados()`, `pt_favorecidos_finais()` | detalhe dos documentos SIAFI |
 | `emendas_execucao(ano, autor)` | tudo unido: uma linha por documento com favorecido/UG/UO |
 
+## Como as fontes se completam
+
+<p align="center"><img src="siopr/man/figures/fluxo-emendas.svg" width="90%" alt="Como as duas fontes se completam"/></p>
+
+## Arquitetura
+
+<p align="center"><img src="siopr/man/figures/architecture.svg" width="90%" alt="Arquitetura de siopr/siopy"/></p>
+
 ## Limitações conhecidas
 
 * O RDF do SIOP não identifica autor nem número de emenda (só RP). Autor vem do Portal.
@@ -41,9 +62,7 @@ siop-sdk/
 * A API autenticada do SIOP (GraphQL, Conecta gov.br) exige usuário cadastrado por um órgão
   federal — fora do escopo; schemas em `schemas/`.
 
-## Próximos passos sugeridos
+## Licença
 
-1. Obter a chave do Portal e rodar os testes ao vivo (`SIOPR_LIVE=true` / `SIOPY_LIVE=true`).
-2. Gravar fixtures reais do Portal (hoje sintéticas, fiéis ao OpenAPI v3) com `httptest2`/`respx`.
-3. Função de cruzamento RDF × Portal por classificação funcional-programática (ver vignette).
-4. pkgdown + GitHub Actions (R CMD check, pytest) e publicação no CRAN/PyPI.
+MIT, ver o LICENSE de cada pacote. Dados: SIOP/SOF e Portal da Transparência
+(Decreto 8.777/2016).

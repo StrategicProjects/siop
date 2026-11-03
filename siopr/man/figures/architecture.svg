@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 830" width="940" height="830"
+     role="img" aria-labelledby="arch-title arch-desc"
+     font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title id="arch-title">Arquitetura de siopr / siopy</title>
+  <desc id="arch-desc">Uma consulta passa pelas funções públicas, segue por um
+  de três caminhos (SPARQL, catálogo de CSVs ou API REST do Portal da
+  Transparência), desce ao cliente HTTP comum com retries, alcança os
+  serviços públicos e volta como tibble ou DataFrame.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#5D7287"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="830" rx="16" fill="#FFFFFF" stroke="#D9E2EC" stroke-width="1.5"/>
+
+  <g fill="none" stroke="#2C7DA0" stroke-width="1" opacity="0.06">
+    <path d="M0 48H940M0 96H940M0 144H940M0 192H940M0 240H940M0 288H940M0 336H940M0 384H940M0 432H940M0 480H940M0 528H940M0 576H940M0 624H940M0 672H940M0 720H940M0 768H940M48 0V830M96 0V830M144 0V830M192 0V830M240 0V830M288 0V830M336 0V830M384 0V830M432 0V830M480 0V830M528 0V830M576 0V830M624 0V830M672 0V830M720 0V830M768 0V830M816 0V830M864 0V830M912 0V830"/>
+  </g>
+
+  <text x="470" y="46" text-anchor="middle" fill="#0E3A53" font-size="17" font-weight="700">
+    siopr / siopy — como uma consulta vira um tibble / DataFrame
+  </text>
+
+  <!-- funções públicas -->
+  <rect x="100" y="62" width="740" height="86" rx="10" fill="#F4F8FB" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="470" y="86" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">
+    siop_emendas() · siop_orcamento() · siop_sparql() · siop_catalogo() · siop_cadastro_acoes() …
+  </text>
+  <text x="470" y="107" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">
+    pt_emendas() · pt_emenda_documentos() · pt_despesa_documento() · emendas_execucao()
+  </text>
+  <text x="470" y="128" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    mesma superfície nos dois pacotes: mesmos nomes, mesmas colunas (snake_case, sem acentos), códigos como texto
+  </text>
+
+  <g fill="none" stroke="#5D7287" stroke-width="2" stroke-linejoin="round">
+    <path d="M470 148V168"/>
+    <path d="M190 168H750"/>
+    <path d="M190 168V196" marker-end="url(#arrow)"/>
+    <path d="M470 168V196" marker-end="url(#arrow)"/>
+    <path d="M750 168V196" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- três caminhos -->
+  <rect x="60" y="200" width="260" height="158" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.2"/>
+  <text x="190" y="224" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">SPARQL — orcamento.R/.py</text>
+  <text x="190" y="246" text-anchor="middle" fill="#4A6076" font-size="11.5">template orcamento.rq (42 colunas)</text>
+  <text x="190" y="264" text-anchor="middle" fill="#4A6076" font-size="11.5">filtros viram FILTER(?x IN (…))</text>
+  <text x="190" y="282" text-anchor="middle" fill="#4A6076" font-size="11.5">sem ORDER BY: o Virtuoso limita</text>
+  <text x="190" y="300" text-anchor="middle" fill="#4A6076" font-size="11.5">OFFSET ordenado a 10 000 (SR353)</text>
+  <text x="190" y="322" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">orçamento inteiro: particiona</text>
+  <text x="190" y="340" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">por órgão, nunca por OFFSET</text>
+
+  <rect x="340" y="200" width="260" height="158" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.2"/>
+  <text x="470" y="224" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">CSVs — catalogo.R/.py</text>
+  <text x="470" y="246" text-anchor="middle" fill="#4A6076" font-size="11.5">raspa a página de Dados Abertos:</text>
+  <text x="470" y="264" text-anchor="middle" fill="#4A6076" font-size="11.5">URLs irregulares, datas no nome</text>
+  <text x="470" y="282" text-anchor="middle" fill="#4A6076" font-size="11.5">download com cache em disco</text>
+  <text x="470" y="300" text-anchor="middle" fill="#4A6076" font-size="11.5">(R_user_dir / platformdirs)</text>
+  <text x="470" y="322" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">UTF-8 com fallback latin1;</text>
+  <text x="470" y="340" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">separador ; e decimal ,</text>
+
+  <rect x="620" y="200" width="260" height="158" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.2"/>
+  <text x="750" y="224" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">REST — transparencia.R/.py</text>
+  <text x="750" y="246" text-anchor="middle" fill="#4A6076" font-size="11.5">chave só por variável de ambiente</text>
+  <text x="750" y="264" text-anchor="middle" fill="#4A6076" font-size="11.5">PORTAL_TRANSPARENCIA_API_KEY</text>
+  <text x="750" y="282" text-anchor="middle" fill="#4A6076" font-size="11.5">rate limit interno de 90 req/min</text>
+  <text x="750" y="300" text-anchor="middle" fill="#4A6076" font-size="11.5">paginação até a página vazia</text>
+  <text x="750" y="322" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">progresso e erros com cli;</text>
+  <text x="750" y="340" text-anchor="middle" fill="#B07E00" font-size="11.5" font-weight="600">max_paginas como válvula</text>
+
+  <g fill="none" stroke="#5D7287" stroke-width="2" stroke-linejoin="round">
+    <path d="M190 358V382"/>
+    <path d="M470 358V382"/>
+    <path d="M750 358V382"/>
+    <path d="M190 382H750"/>
+    <path d="M470 382V404" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- HTTP comum -->
+  <rect x="100" y="408" width="740" height="84" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.2"/>
+  <text x="470" y="432" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">http.R (httr2) · _http.py (httpx)</text>
+  <text x="470" y="454" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    retries de 429/5xx e falhas de transporte com backoff exponencial; respeita Retry-After
+  </text>
+  <text x="470" y="474" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    User-Agent identificado · timeout de 300 s (consultas SPARQL grandes demoram) · erros com corpo da resposta
+  </text>
+
+  <g fill="none" stroke="#5D7287" stroke-width="2" stroke-linejoin="round">
+    <path d="M470 492V512"/>
+    <path d="M190 512H750"/>
+    <path d="M190 512V540" marker-end="url(#arrow)"/>
+    <path d="M470 512V540" marker-end="url(#arrow)"/>
+    <path d="M750 512V540" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- serviços -->
+  <rect x="60" y="544" width="260" height="64" rx="10" fill="#EDF3F9" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="190" y="570" text-anchor="middle" fill="#0E3A53" font-size="12.5" font-weight="700">www1.siop.planejamento.gov.br</text>
+  <text x="190" y="592" text-anchor="middle" fill="#4A6076" font-size="11">/sparql (Virtuoso) · format=text/csv</text>
+
+  <rect x="340" y="544" width="260" height="64" rx="10" fill="#EDF3F9" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="470" y="570" text-anchor="middle" fill="#0E3A53" font-size="12.5" font-weight="700">SIOP Dados Abertos</text>
+  <text x="470" y="592" text-anchor="middle" fill="#4A6076" font-size="11">CSVs oficiais (.zip), sem credencial</text>
+
+  <rect x="620" y="544" width="260" height="64" rx="10" fill="#EDF3F9" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="750" y="570" text-anchor="middle" fill="#0E3A53" font-size="12.5" font-weight="700">api.portaldatransparencia.gov.br</text>
+  <text x="750" y="592" text-anchor="middle" fill="#4A6076" font-size="11">emendas e documentos de despesa (CGU)</text>
+
+  <g fill="none" stroke="#5D7287" stroke-width="2" stroke-linejoin="round">
+    <path d="M190 608V632"/>
+    <path d="M470 608V632"/>
+    <path d="M750 608V632"/>
+    <path d="M190 632H750"/>
+    <path d="M470 632V654" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- parse -->
+  <rect x="100" y="658" width="740" height="76" rx="10" fill="#F4F8FB" stroke="#2C7DA0" stroke-width="1.2"/>
+  <text x="470" y="682" text-anchor="middle" fill="#0E3A53" font-size="14" font-weight="700">parse</text>
+  <text x="470" y="704" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    "1.234,56" → 1234.56 · códigos sempre texto (zeros à esquerda preservados) · colunas renomeadas para snake_case
+  </text>
+  <text x="470" y="724" text-anchor="middle" fill="#4A6076" font-size="11.5">
+    CSV do SPARQL lido com tudo texto e tipado depois · JSON do Portal achatado uma página por vez
+  </text>
+
+  <path d="M470 734V758" stroke="#5D7287" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- resultado -->
+  <rect x="100" y="762" width="740" height="44" rx="10" fill="#F4F8FB" stroke="#B07E00" stroke-width="1.5"/>
+  <text x="470" y="789" text-anchor="middle" fill="#0E3A53" font-size="13.5" font-weight="700">
+    um tibble / DataFrame — e emendas_execucao() junta SIOP × Portal: uma linha por documento de despesa
+  </text>
+</svg>

@@ -1,0 +1,37 @@
+# Testes do siopy em vários sistemas e versões de Python. Os testes rodam
+# offline (respx); os testes ao vivo só com SIOPY_LIVE=true, nunca no CI.
+name: siopy
+
+on:
+  push:
+    paths:
+      - "siopy/**"
+      - ".github/workflows/siopy.yaml"
+  pull_request:
+    paths:
+      - "siopy/**"
+      - ".github/workflows/siopy.yaml"
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} (Python ${{ matrix.python }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          - {os: windows-latest, python: "3.13"}
+          - {os: macos-latest, python: "3.13"}
+    defaults:
+      run:
+        working-directory: siopy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q

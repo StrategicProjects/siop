@@ -74,3 +74,17 @@ até o fim nesta sessão. Se ficar lento na prática, as opções são: (a) remo
 de rótulos raramente usados (`desc_po`, `desc_fonte`, `desc_elemento`, `desc_iduso`,
 `desc_rp`) e resolvê-los depois com uma consulta de dicionário por exercício; (b) particionar
 também por UO. Os testes ao vivo (`SIOPR_LIVE`/`SIOPY_LIVE`) cobrem esse caso.
+
+## 2026-11-03 · Publicação: repo StrategicProjects/siop, CRAN e PyPI
+
+Monorepo público `github.com/StrategicProjects/siop` (padrão da org, como `misocial`):
+`siopr/` + `siopy/` + workflows na raiz (`siopr.yaml` R CMD check, `siopy.yaml` pytest+ruff,
+`pkgdown.yaml` site em gh-pages, `pypi.yaml` trusted publishing em tags `siopy-v*`).
+Site pkgdown em <https://strategicprojects.github.io/siop/>. Identidade visual: hexágono
+petróleo (#0e3a53→#2c7da0) com documento da LOA, linha de emenda em âmbar e três moedas
+E/L/P (empenhado, liquidado, pago); diagramas `architecture.svg` e `fluxo-emendas.svg` em
+`siopr/man/figures/`, compartilhados pelos dois READMEs (o siopy referencia por URL raw).
+DESCRIPTION com Title/Description em inglês (prática CRAN da org) e `Language: pt-BR` para a
+documentação em português. Nomes conferidos livres em 2026-11-03: `siopr` não existe no CRAN,
+`siopy` não existe no PyPI. Publicação no PyPI por trusted publishing (configurar o publisher
+pendente no PyPI: owner StrategicProjects, repo siop, workflow pypi.yaml, environment pypi).

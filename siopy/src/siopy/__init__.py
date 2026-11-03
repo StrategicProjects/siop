@@ -6,6 +6,7 @@ Fontes públicas, sem credencial do SIOP:
 * ``pt_*``   — API REST do Portal da Transparência (chave em ``PORTAL_TRANSPARENCIA_API_KEY``).
 """
 
+from ._msg import set_verbose
 from ._version import __version__
 from .catalogo import (
     siop_acompanhamento,
@@ -48,6 +49,7 @@ __all__ = [
     "pt_favorecidos_finais",
     "pt_has_key",
     "pt_set_key",
+    "set_verbose",
     "siop_acompanhamento",
     "siop_cadastro_acoes",
     "siop_catalogo",

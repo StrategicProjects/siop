@@ -14,6 +14,7 @@ from typing import Any
 
 import pandas as pd
 
+from . import _msg
 from ._http import make_client, request_with_retry
 from ._parse import brl_columns
 
@@ -311,7 +312,11 @@ def emendas_execucao(
             return emendas
         if max_emendas is not None:
             emendas = emendas.head(max_emendas)
-        docs = [pt_emenda_documentos(c, client=pt) for c in emendas["codigo_emenda"]]
+        codigos = list(emendas["codigo_emenda"])
+        docs = []
+        for i, c in enumerate(codigos, 1):
+            _msg.progress(i, len(codigos), "Documentos por emenda")
+            docs.append(pt_emenda_documentos(c, client=pt))
         docs_df = (
             pd.concat([d for d in docs if not d.empty], ignore_index=True)
             if any(not d.empty for d in docs)
@@ -320,7 +325,10 @@ def emendas_execucao(
         out = emendas.merge(docs_df, on="codigo_emenda", how="left", suffixes=("", "_doc"))
         if detalhar and "codigo_documento" in out.columns:
             cods = out["codigo_documento"].dropna().unique()
-            det = [pt_despesa_documento(c, client=pt) for c in cods]
+            det = []
+            for i, c in enumerate(cods, 1):
+                _msg.progress(i, len(cods), "Detalhe dos documentos")
+                det.append(pt_despesa_documento(c, client=pt))
             det_df = (
                 pd.concat([d for d in det if not d.empty], ignore_index=True)
                 if det

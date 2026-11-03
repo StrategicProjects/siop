@@ -1,0 +1,80 @@
+url: https://strategicprojects.github.io/siop/
+
+template:
+  bootstrap: 5
+  light-switch: true
+  bslib:
+    primary: "#0e3a53"
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github, lightswitch]
+  components:
+    articles:
+      text: Artigos
+      menu:
+        - text: "Emendas parlamentares: do RDF do SIOP ao Portal da Transparência"
+          href: articles/emendas.html
+
+home:
+  title: "siopr: Orçamento Federal (SIOP) e emendas parlamentares (Portal da Transparência) em tibbles"
+  description: >
+    Acesso tidyverse a fontes públicas do orçamento federal brasileiro: o
+    endpoint SPARQL e os CSVs oficiais dos Dados Abertos do SIOP (SOF/MPO),
+    incluindo as dotações de emendas parlamentares (RP 6/7/8/9), e a API
+    REST do Portal da Transparência (CGU) para emendas por autor e seus
+    documentos de despesa. Pacote irmão em Python: siopy.
+
+reference:
+  - title: "Emendas e orçamento (SPARQL)"
+    desc: >
+      Linhas da LOA com classificação completa e execução, direto do RDF do
+      SIOP. Emendas são as linhas com Resultado Primário 6, 7, 8 ou 9.
+    contents:
+      - siop_emendas
+      - siop_orcamento
+      - tipo_emenda_rp
+      - siop_sparql
+      - siop_montar_query
+
+  - title: "Metadados do RDF"
+    desc: "Órgãos, exercícios disponíveis e data da última carga."
+    contents:
+      - siop_orgaos
+      - siop_exercicios
+
+  - title: "CSVs oficiais do SIOP"
+    desc: >
+      Tudo que está publicado na página de Dados Abertos, com cache em
+      disco.
+    contents:
+      - siop_catalogo
+      - siop_parse_catalogo
+      - siop_download
+      - siop_cadastro_acoes
+      - siop_creditos
+      - siop_acompanhamento
+      - siop_regionalizacao
+      - siop_cache_dir
+
+  - title: "Portal da Transparência"
+    desc: >
+      Emendas por autor e documentos de despesa (SIAFI). Requer chave
+      gratuita em PORTAL_TRANSPARENCIA_API_KEY.
+    contents:
+      - pt_emendas
+      - pt_emenda_documentos
+      - pt_despesa_documento
+      - pt_documentos_relacionados
+      - pt_favorecidos_finais
+      - pt_set_key
+      - pt_has_key
+
+  - title: "Cruzamento"
+    desc: "SIOP × Portal: uma linha por documento de despesa."
+    contents:
+      - emendas_execucao
+
+news:
+  one_page: true

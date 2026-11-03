@@ -10,7 +10,7 @@ import httpx
 
 from ._version import __version__
 
-USER_AGENT = f"siopy/{__version__} (+https://github.com/castlab/siop-sdk)"
+USER_AGENT = f"siopy/{__version__} (+https://github.com/StrategicProjects/siop)"
 
 RETRY_STATUS = {429, 500, 502, 503, 504}
 
