@@ -64,3 +64,13 @@ apenas com `SIOPR_LIVE=true` / `SIOPY_LIVE=true` (e a chave, para `pt_*`).
 
 R: httr2, tibble, readr, cli, rlang (Suggests: testthat, knitr). Python: httpx, pandas,
 platformdirs (dev: pytest, respx). Sem rdflib/SPARQLWrapper — parse direto do CSV/JSON.
+
+## 2026-11-03 · Pendência: desempenho da consulta completa por órgão
+
+O template `orcamento.rq` (42 colunas, com rótulos de todos os classificadores) foi validado
+ponta a ponta com `LIMIT 5` e com os filtros `FILTER(?cod_rp IN (...))`. A execução sem LIMIT
+para um órgão grande (MEC, RP 6/7, 2025) ultrapassou 45 s no navegador e não pôde ser medida
+até o fim nesta sessão. Se ficar lento na prática, as opções são: (a) remover os `OPTIONAL`
+de rótulos raramente usados (`desc_po`, `desc_fonte`, `desc_elemento`, `desc_iduso`,
+`desc_rp`) e resolvê-los depois com uma consulta de dicionário por exercício; (b) particionar
+também por UO. Os testes ao vivo (`SIOPR_LIVE`/`SIOPY_LIVE`) cobrem esse caso.
