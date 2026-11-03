@@ -2,16 +2,18 @@
 % Please edit documentation in R/transparencia.R
 \name{pt_favorecidos_finais}
 \alias{pt_favorecidos_finais}
-\title{Favorecidos finais de um documento de despesa}
+\title{Favorecidos finais de documentos de despesa}
 \usage{
-pt_favorecidos_finais(codigo_documento, max_paginas = Inf)
+pt_favorecidos_finais(codigo_documento, max_paginas = Inf, .progress = TRUE)
 }
 \arguments{
-\item{codigo_documento}{Código completo (UG + gestão + número), como em
+\item{codigo_documento}{Código(s) completo(s) (UG + gestão + número), como em
 \code{codigo_documento} de \code{\link[=pt_emenda_documentos]{pt_emenda_documentos()}}.}
 
 \item{max_paginas}{Limite de páginas (15 registros cada). Padrão: todas.}
+
+\item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
 \description{
-Favorecidos finais de um documento de despesa
+Favorecidos finais de documentos de despesa
 }

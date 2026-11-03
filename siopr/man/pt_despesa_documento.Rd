@@ -2,18 +2,21 @@
 % Please edit documentation in R/transparencia.R
 \name{pt_despesa_documento}
 \alias{pt_despesa_documento}
-\title{Detalhe de um documento de despesa}
+\title{Detalhe de documentos de despesa}
 \usage{
-pt_despesa_documento(codigo_documento)
+pt_despesa_documento(codigo_documento, .progress = TRUE)
 }
 \arguments{
-\item{codigo_documento}{Código completo (UG + gestão + número), como em
+\item{codigo_documento}{Código(s) completo(s) (UG + gestão + número), como em
 \code{codigo_documento} de \code{\link[=pt_emenda_documentos]{pt_emenda_documentos()}}.}
+
+\item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
 \value{
-Tibble de uma linha.
+Tibble com uma linha por documento.
 }
 \description{
 \code{GET /api-de-dados/despesas/documentos/{codigo}}: favorecido, UG, UO, órgão,
-classificação funcional-programática, valor, autor da emenda.
+classificação funcional-programática, valor, autor da emenda. Aceita um ou
+mais códigos e devolve um único tibble (uma linha por documento).
 }

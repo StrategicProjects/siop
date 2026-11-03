@@ -16,9 +16,11 @@ emendas_execucao(
 \arguments{
 \item{ano}{Ano da emenda.}
 
-\item{autor}{Nome do parlamentar (busca textual da API). Acentos são
-removidos e o nome vai em maiúsculas automaticamente — a busca da API
-não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").}
+\item{autor}{Nome(s) de parlamentar (busca textual da API; um ou mais).
+Acentos são removidos e o nome vai em maiúsculas automaticamente — a
+busca da API não encontra nomes acentuados ("Túlio Gadêlha" vira
+"TULIO GADELHA"). Com vários autores, as buscas são feitas uma a uma e
+emendas repetidas (a busca é parcial) são deduplicadas pelo código.}
 
 \item{tipo}{Tipo de emenda, como na API (ex.: \code{"Emenda Individual - Transferências com Finalidade Definida"}).}
 

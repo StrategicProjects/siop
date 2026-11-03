@@ -12,21 +12,26 @@ pt_emendas(
   numero = NULL,
   funcao = NULL,
   subfuncao = NULL,
-  max_paginas = Inf
+  max_paginas = Inf,
+  .progress = TRUE
 )
 }
 \arguments{
 \item{ano}{Ano da emenda.}
 
-\item{autor}{Nome do parlamentar (busca textual da API). Acentos são
-removidos e o nome vai em maiúsculas automaticamente — a busca da API
-não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").}
+\item{autor}{Nome(s) de parlamentar (busca textual da API; um ou mais).
+Acentos são removidos e o nome vai em maiúsculas automaticamente — a
+busca da API não encontra nomes acentuados ("Túlio Gadêlha" vira
+"TULIO GADELHA"). Com vários autores, as buscas são feitas uma a uma e
+emendas repetidas (a busca é parcial) são deduplicadas pelo código.}
 
 \item{tipo}{Tipo de emenda, como na API (ex.: \code{"Emenda Individual - Transferências com Finalidade Definida"}).}
 
 \item{codigo, numero, funcao, subfuncao}{Demais filtros da API (texto).}
 
 \item{max_paginas}{Limite de páginas (15 registros cada). Padrão: todas.}
+
+\item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
 \value{
 Tibble; valores em R$ numéricos, nomes em \code{snake_case}.

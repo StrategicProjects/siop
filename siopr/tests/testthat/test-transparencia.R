@@ -84,3 +84,35 @@ test_that("pt_emendas normaliza o autor (acentos e caixa)", {
   pt_emendas(2025, autor = "Túlio Gadêlha")
   expect_match(reqs()[[1]]$url, "nomeAutor=TULIO%20GADELHA")
 })
+
+test_that("pt_emenda_documentos vetorizado empilha com a coluna-chave", {
+  local_pt_key()
+  reqs <- mock_queue(
+    resp_json("pt_emenda_documentos.json"), resp_json("pt_vazio.json"),
+    resp_json("pt_emenda_documentos.json"), resp_json("pt_vazio.json")
+  )
+  df <- pt_emenda_documentos(c("A1", "B2"), .progress = FALSE)
+  expect_length(reqs(), 4L)
+  expect_equal(unique(df$codigo_emenda), c("A1", "B2"))
+})
+
+test_that("pt_despesa_documento vetorizado devolve uma linha por codigo", {
+  local_pt_key()
+  reqs <- mock_queue(resp_json("pt_despesa_documento.json"), resp_json("pt_despesa_documento.json"))
+  df <- pt_despesa_documento(c("D1", "D2"), .progress = FALSE)
+  expect_length(reqs(), 2L)
+  expect_equal(nrow(df), 2L)
+})
+
+test_that("pt_emendas com varios autores deduplica pelo codigo", {
+  local_pt_key()
+  reqs <- mock_queue(
+    resp_json("pt_emendas_p1.json"), resp_json("pt_vazio.json"),
+    resp_json("pt_emendas_p1.json"), resp_json("pt_vazio.json")
+  )
+  df <- pt_emendas(2025, autor = c("Fulano", "Fulano de Tal"), .progress = FALSE)
+  expect_length(reqs(), 4L)
+  expect_match(reqs()[[1]]$url, "nomeAutor=FULANO")
+  expect_match(reqs()[[3]]$url, "nomeAutor=FULANO%20DE%20TAL")
+  expect_equal(anyDuplicated(df$codigo_emenda), 0L)
+})

@@ -56,19 +56,17 @@ nrow(deputados)
 
 ## Passo 2: as emendas de cada um
 
-A busca da API do Portal é textual e por isso `pt_emendas()` já remove os
-acentos do autor sozinho ("Túlio Gadêlha" → "TULIO GADELHA"); filtramos pela
-igualdade exata para não levar homônimos parciais junto.
+`pt_emendas()` aceita um vetor de autores e devolve um único tibble; a busca
+da API é textual e por isso ela já remove os acentos sozinha ("Túlio
+Gadêlha" → "TULIO GADELHA"). O `inner_join()` pela forma normalizada do nome
+descarta homônimos parciais e traz de volta o nome bonito, acentuado.
 
 ```{r}
-emendas <- deputados |>
-  pull(nome) |>
-  map(\(nome) {
-    pt_emendas(2025, autor = nome) |>
-      filter(autor == toupper(sem_acento(nome))) |>
-      mutate(deputado = nome)
-  }) |>
-  list_rbind()
+emendas <- pt_emendas(2025, autor = deputados$nome) |>
+  inner_join(
+    deputados |> transmute(autor = toupper(sem_acento(nome)), deputado = nome),
+    by = "autor"
+  )
 nrow(emendas)
 #> [1] 235
 ```
@@ -79,22 +77,19 @@ teto individual do exercício, R$ 37,3 milhões por deputado.
 
 ## Passo 3: documento a documento
 
-Dois níveis de consulta: os documentos de cada emenda e o detalhe de cada
-empenho. São ~2 mil requisições; o pacote respeita sozinho o limite de 90
-por minuto do Portal, então a célula abaixo leva cerca de meia hora.
+Dois níveis de consulta, e os dois aceitam vetores: os documentos de cada
+emenda e o detalhe de cada empenho. São ~2 mil requisições; o pacote mostra
+o progresso e respeita sozinho o limite de 90 por minuto do Portal, então a
+célula abaixo leva cerca de meia hora.
 
 ```{r}
-documentos <- emendas |>
-  pull(codigo_emenda) |>
-  map(pt_emenda_documentos) |>
-  list_rbind()
+documentos <- pt_emenda_documentos(emendas$codigo_emenda)
 
 empenhos <- documentos |>
   filter(fase == "Empenho") |>
   distinct(codigo_documento) |>
   pull() |>
-  map(pt_despesa_documento) |>
-  list_rbind()
+  pt_despesa_documento()
 
 c(documentos = nrow(documentos), empenhos = nrow(empenhos))
 #> documentos   empenhos

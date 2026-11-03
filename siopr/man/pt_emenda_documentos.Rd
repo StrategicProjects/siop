@@ -2,19 +2,22 @@
 % Please edit documentation in R/transparencia.R
 \name{pt_emenda_documentos}
 \alias{pt_emenda_documentos}
-\title{Documentos de despesa ligados a uma emenda}
+\title{Documentos de despesa ligados a emendas}
 \usage{
-pt_emenda_documentos(codigo_emenda, max_paginas = Inf)
+pt_emenda_documentos(codigo_emenda, max_paginas = Inf, .progress = TRUE)
 }
 \arguments{
-\item{codigo_emenda}{Código da emenda (coluna \code{codigo_emenda} de \code{\link[=pt_emendas]{pt_emendas()}}).}
+\item{codigo_emenda}{Código(s) de emenda (coluna \code{codigo_emenda} de \code{\link[=pt_emendas]{pt_emendas()}}).}
 
 \item{max_paginas}{Limite de páginas (15 registros cada). Padrão: todas.}
+
+\item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
 \value{
 Tibble com \code{codigo_emenda}, \code{id}, \code{data}, \code{fase}, \code{codigo_documento},
 \code{codigo_documento_resumido}, \code{especie_tipo}, \code{tipo_emenda}.
 }
 \description{
-\code{GET /api-de-dados/emendas/documentos/{codigo}}: empenhos, liquidações e pagamentos.
+\code{GET /api-de-dados/emendas/documentos/{codigo}}: empenhos, liquidações e
+pagamentos. Aceita um ou mais códigos e devolve um único tibble.
 }

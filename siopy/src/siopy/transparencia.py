@@ -190,6 +190,27 @@ def _pt(client) -> tuple[PortalTransparencia, bool]:
     return PortalTransparencia(client=client), True
 
 
+def _como_lista(x) -> list:
+    if isinstance(x, str) or not hasattr(x, "__iter__"):
+        return [x]
+    return list(x)
+
+
+def _varios(x, um, rotulo: str) -> pd.DataFrame:
+    """Aplica ``um()`` a cada elemento e empilha, com progresso nos loops longos."""
+    xs = _como_lista(x)
+    if not xs:
+        return pd.DataFrame()
+    if len(xs) == 1:
+        return um(xs[0])
+    dfs = []
+    for i, xi in enumerate(xs, 1):
+        _msg.progress(i, len(xs), rotulo)
+        dfs.append(um(xi))
+    dfs = [d for d in dfs if not d.empty]
+    return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+
+
 def pt_emendas(
     ano: int | None = None,
     *,
@@ -204,97 +225,142 @@ def pt_emendas(
 ) -> pd.DataFrame:
     """Emendas parlamentares (``/api-de-dados/emendas``), todas as páginas.
 
-    ``autor`` é o nome do parlamentar (busca textual); acentos são removidos e
-    o nome vai em maiúsculas automaticamente — a busca da API não encontra
-    nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). ``tipo`` como na
-    API (ex.: "Emenda Individual - Transferências com Finalidade Definida").
-    Valores em R$ numéricos.
+    ``autor`` é um ou mais nomes de parlamentar (busca textual); acentos são
+    removidos e o nome vai em maiúsculas automaticamente — a busca da API não
+    encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). Com
+    vários autores, as buscas são feitas uma a uma e emendas repetidas (a
+    busca é parcial) são deduplicadas pelo código. ``tipo`` como na API (ex.:
+    "Emenda Individual - Transferências com Finalidade Definida"). Valores em
+    R$ numéricos.
     """
     if autor is not None:
         from .apoio import sem_acento
 
-        autor = sem_acento(autor).upper()
+        autores = [sem_acento(a).upper() for a in _como_lista(autor)]
+    else:
+        autores = [None]
     pt, own = _pt(client)
     try:
-        itens = pt.get_paginado(
-            "/api-de-dados/emendas",
-            max_paginas=max_paginas,
-            ano=ano,
-            nomeAutor=autor,
-            tipoEmenda=tipo,
-            codigoEmenda=codigo,
-            numeroEmenda=numero,
-            codigoFuncao=funcao,
-            codigoSubfuncao=subfuncao,
-        )
+
+        def um(a):
+            itens = pt.get_paginado(
+                "/api-de-dados/emendas",
+                max_paginas=max_paginas,
+                ano=ano,
+                nomeAutor=a,
+                tipoEmenda=tipo,
+                codigoEmenda=codigo,
+                numeroEmenda=numero,
+                codigoFuncao=funcao,
+                codigoSubfuncao=subfuncao,
+            )
+            return _to_df(itens)
+
+        if len(autores) == 1:
+            df = um(autores[0])
+        else:
+            df = _varios(autores, um, "Emendas por autor")
+            if "codigo_emenda" in df.columns:
+                # a busca da API é parcial: "LULA DA FONTE" também responde a "DA FONTE"
+                df = df.drop_duplicates(subset="codigo_emenda", ignore_index=True)
     finally:
         if own:
             pt.close()
-    df = _to_df(itens)
     if "ano" in df.columns:
         df["ano"] = pd.to_numeric(df["ano"], errors="coerce").astype("Int64")
     return df
 
 
 def pt_emenda_documentos(
-    codigo_emenda: str, *, max_paginas: int | None = None, client=None
+    codigo_emenda: str | list[str], *, max_paginas: int | None = None, client=None
 ) -> pd.DataFrame:
-    """Documentos (empenho/liquidação/pagamento) ligados a uma emenda (``/emendas/documentos/{codigo}``)."""
+    """Documentos (empenho/liquidação/pagamento) ligados a emendas (``/emendas/documentos/{codigo}``).
+
+    Aceita um ou mais códigos e devolve um único DataFrame, com a coluna
+    ``codigo_emenda`` na frente.
+    """
     pt, own = _pt(client)
     try:
-        itens = pt.get_paginado(
-            f"/api-de-dados/emendas/documentos/{codigo_emenda}", max_paginas=max_paginas
-        )
+
+        def um(cod):
+            itens = pt.get_paginado(
+                f"/api-de-dados/emendas/documentos/{cod}", max_paginas=max_paginas
+            )
+            df = _to_df(itens)
+            if not df.empty:
+                df.insert(0, "codigo_emenda", str(cod))
+            return df
+
+        return _varios(codigo_emenda, um, "Documentos por emenda")
     finally:
         if own:
             pt.close()
-    df = _to_df(itens)
-    if not df.empty:
-        df.insert(0, "codigo_emenda", str(codigo_emenda))
-    return df
 
 
-def pt_despesa_documento(codigo_documento: str, *, client=None) -> pd.DataFrame:
-    """Detalhe de um documento de despesa (``/despesas/documentos/{codigo}``): favorecido, UG, UO, classificação."""
+def pt_despesa_documento(codigo_documento: str | list[str], *, client=None) -> pd.DataFrame:
+    """Detalhe de documentos de despesa (``/despesas/documentos/{codigo}``): favorecido, UG, UO, classificação.
+
+    Aceita um ou mais códigos e devolve um único DataFrame (uma linha por documento).
+    """
     pt, own = _pt(client)
     try:
-        item = pt.get(f"/api-de-dados/despesas/documentos/{codigo_documento}")
+
+        def um(cod):
+            item = pt.get(f"/api-de-dados/despesas/documentos/{cod}")
+            return _to_df([item] if isinstance(item, dict) else list(item))
+
+        return _varios(codigo_documento, um, "Detalhe dos documentos")
     finally:
         if own:
             pt.close()
-    return _to_df([item] if isinstance(item, dict) else list(item))
 
 
-def pt_documentos_relacionados(codigo_documento: str, fase: int, *, client=None) -> pd.DataFrame:
-    """Documentos relacionados a um documento (``fase``: 1 empenho, 2 liquidação, 3 pagamento)."""
+def pt_documentos_relacionados(
+    codigo_documento: str | list[str], fase: int, *, client=None
+) -> pd.DataFrame:
+    """Documentos relacionados (``fase``: 1 empenho, 2 liquidação, 3 pagamento); um ou mais códigos."""
     pt, own = _pt(client)
     try:
-        itens = pt.get(
-            "/api-de-dados/despesas/documentos-relacionados",
-            codigoDocumento=codigo_documento,
-            fase=fase,
-        )
+
+        def um(cod):
+            itens = pt.get(
+                "/api-de-dados/despesas/documentos-relacionados",
+                codigoDocumento=cod,
+                fase=fase,
+            )
+            df = _to_df(list(itens))
+            if not df.empty:
+                df.insert(0, "codigo_documento", str(cod))
+            return df
+
+        return _varios(codigo_documento, um, "Documentos relacionados")
     finally:
         if own:
             pt.close()
-    return _to_df(list(itens))
 
 
 def pt_favorecidos_finais(
-    codigo_documento: str, *, max_paginas: int | None = None, client=None
+    codigo_documento: str | list[str], *, max_paginas: int | None = None, client=None
 ) -> pd.DataFrame:
-    """Favorecidos finais de um documento (``/despesas/favorecidos-finais-por-documento``)."""
+    """Favorecidos finais (``/despesas/favorecidos-finais-por-documento``); um ou mais códigos."""
     pt, own = _pt(client)
     try:
-        itens = pt.get_paginado(
-            "/api-de-dados/despesas/favorecidos-finais-por-documento",
-            max_paginas=max_paginas,
-            codigoDocumento=codigo_documento,
-        )
+
+        def um(cod):
+            itens = pt.get_paginado(
+                "/api-de-dados/despesas/favorecidos-finais-por-documento",
+                max_paginas=max_paginas,
+                codigoDocumento=cod,
+            )
+            df = _to_df(itens)
+            if not df.empty:
+                df.insert(0, "codigo_documento", str(cod))
+            return df
+
+        return _varios(codigo_documento, um, "Favorecidos finais")
     finally:
         if own:
             pt.close()
-    return _to_df(itens)
 
 
 def emendas_execucao(
@@ -319,28 +385,13 @@ def emendas_execucao(
             return emendas
         if max_emendas is not None:
             emendas = emendas.head(max_emendas)
-        codigos = list(emendas["codigo_emenda"])
-        docs = []
-        for i, c in enumerate(codigos, 1):
-            _msg.progress(i, len(codigos), "Documentos por emenda")
-            docs.append(pt_emenda_documentos(c, client=pt))
-        docs_df = (
-            pd.concat([d for d in docs if not d.empty], ignore_index=True)
-            if any(not d.empty for d in docs)
-            else pd.DataFrame(columns=["codigo_emenda"])
-        )
+        docs_df = pt_emenda_documentos(list(emendas["codigo_emenda"]), client=pt)
+        if docs_df.empty:
+            docs_df = pd.DataFrame(columns=["codigo_emenda"])
         out = emendas.merge(docs_df, on="codigo_emenda", how="left", suffixes=("", "_doc"))
         if detalhar and "codigo_documento" in out.columns:
-            cods = out["codigo_documento"].dropna().unique()
-            det = []
-            for i, c in enumerate(cods, 1):
-                _msg.progress(i, len(cods), "Detalhe dos documentos")
-                det.append(pt_despesa_documento(c, client=pt))
-            det_df = (
-                pd.concat([d for d in det if not d.empty], ignore_index=True)
-                if det
-                else pd.DataFrame()
-            )
+            cods = list(out["codigo_documento"].dropna().unique())
+            det_df = pt_despesa_documento(cods, client=pt)
             if not det_df.empty and "documento" in det_df.columns:
                 det_df = det_df.rename(columns={"documento": "codigo_documento"}).drop_duplicates(
                     subset="codigo_documento"

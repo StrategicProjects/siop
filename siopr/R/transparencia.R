@@ -72,6 +72,28 @@ pt_get_paginado <- function(path, ..., max_paginas = Inf) {
 pt_valor_cols <- c("valorEmpenhado", "valorLiquidado", "valorPago", "valorRestoInscrito",
                    "valorRestoCancelado", "valorRestoPago", "valor", "valorFinal")
 
+# rbind tolerante a colunas diferentes entre lotes (a API omite campos vazios)
+rbind_fill <- function(dfs) {
+  dfs <- dfs[vapply(dfs, nrow, integer(1)) > 0]
+  if (!length(dfs)) return(tibble::tibble())
+  cols <- unique(unlist(lapply(dfs, names)))
+  dfs <- lapply(dfs, function(d) { d[setdiff(cols, names(d))] <- NA; d[cols] })
+  do.call(rbind, dfs)
+}
+
+# aplica `um()` a cada elemento e empilha, com barra de progresso nos loops longos
+pt_varios <- function(x, um, .progress, rotulo) {
+  if (length(x) == 0) return(tibble::tibble())
+  if (length(x) == 1) return(um(x))
+  if (.progress) cli::cli_progress_bar(rotulo, total = length(x))
+  out <- lapply(x, function(xi) {
+    if (.progress) cli::cli_progress_update(.envir = parent.frame(2))
+    um(xi)
+  })
+  if (.progress) cli::cli_progress_done()
+  rbind_fill(out)
+}
+
 # camelCase -> snake_case (conservando siglas usuais)
 to_snake <- function(x) {
   x <- gsub("([a-z0-9])([A-Z])", "\\1_\\2", x)
@@ -106,13 +128,16 @@ pt_to_tibble <- function(itens) {
 #' empenhado, liquidado, pago e de restos a pagar (inscrito, cancelado, pago).
 #'
 #' @param ano Ano da emenda.
-#' @param autor Nome do parlamentar (busca textual da API). Acentos são
-#'   removidos e o nome vai em maiúsculas automaticamente — a busca da API
-#'   não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").
+#' @param autor Nome(s) de parlamentar (busca textual da API; um ou mais).
+#'   Acentos são removidos e o nome vai em maiúsculas automaticamente — a
+#'   busca da API não encontra nomes acentuados ("Túlio Gadêlha" vira
+#'   "TULIO GADELHA"). Com vários autores, as buscas são feitas uma a uma e
+#'   emendas repetidas (a busca é parcial) são deduplicadas pelo código.
 #' @param tipo Tipo de emenda, como na API (ex.: `"Emenda Individual - Transferências
 #'   com Finalidade Definida"`).
 #' @param codigo,numero,funcao,subfuncao Demais filtros da API (texto).
 #' @param max_paginas Limite de páginas (15 registros cada). Padrão: todas.
+#' @param .progress Mostrar barra de progresso quando houver mais de um item.
 #' @return Tibble; valores em R$ numéricos, nomes em `snake_case`.
 #' @examples
 #' \dontrun{
@@ -122,57 +147,83 @@ pt_to_tibble <- function(itens) {
 #' @seealso [pt_emenda_documentos()], [emendas_execucao()]
 #' @export
 pt_emendas <- function(ano = NULL, autor = NULL, tipo = NULL, codigo = NULL, numero = NULL,
-                       funcao = NULL, subfuncao = NULL, max_paginas = Inf) {
+                       funcao = NULL, subfuncao = NULL, max_paginas = Inf, .progress = TRUE) {
   if (!is.null(autor)) autor <- toupper(sem_acento(autor))
-  itens <- pt_get_paginado("/api-de-dados/emendas", ano = ano, nomeAutor = autor, tipoEmenda = tipo,
-                           codigoEmenda = codigo, numeroEmenda = numero, codigoFuncao = funcao,
-                           codigoSubfuncao = subfuncao, max_paginas = max_paginas)
-  df <- pt_to_tibble(itens)
+  um <- function(a) {
+    itens <- pt_get_paginado("/api-de-dados/emendas", ano = ano, nomeAutor = a, tipoEmenda = tipo,
+                             codigoEmenda = codigo, numeroEmenda = numero, codigoFuncao = funcao,
+                             codigoSubfuncao = subfuncao, max_paginas = max_paginas)
+    pt_to_tibble(itens)
+  }
+  if (is.null(autor) || length(autor) == 1) {
+    df <- um(if (is.null(autor)) NULL else autor)
+  } else {
+    df <- pt_varios(autor, um, .progress, "Emendas por autor")
+    # a busca da API é parcial: "LULA DA FONTE" também responde a "DA FONTE"
+    if ("codigo_emenda" %in% names(df)) df <- df[!duplicated(df$codigo_emenda), ]
+  }
   if ("ano" %in% names(df)) df$ano <- as.integer(df$ano)
   df
 }
 
-#' Documentos de despesa ligados a uma emenda
+#' Documentos de despesa ligados a emendas
 #'
-#' `GET /api-de-dados/emendas/documentos/{codigo}`: empenhos, liquidações e pagamentos.
-#' @param codigo_emenda Código da emenda (coluna `codigo_emenda` de [pt_emendas()]).
+#' `GET /api-de-dados/emendas/documentos/{codigo}`: empenhos, liquidações e
+#' pagamentos. Aceita um ou mais códigos e devolve um único tibble.
+#' @param codigo_emenda Código(s) de emenda (coluna `codigo_emenda` de [pt_emendas()]).
 #' @inheritParams pt_emendas
 #' @return Tibble com `codigo_emenda`, `id`, `data`, `fase`, `codigo_documento`,
 #'   `codigo_documento_resumido`, `especie_tipo`, `tipo_emenda`.
 #' @export
-pt_emenda_documentos <- function(codigo_emenda, max_paginas = Inf) {
-  df <- pt_to_tibble(pt_get_paginado(paste0("/api-de-dados/emendas/documentos/", codigo_emenda), max_paginas = max_paginas))
-  if (nrow(df)) df <- tibble::add_column(df, codigo_emenda = as.character(codigo_emenda), .before = 1)
-  df
+pt_emenda_documentos <- function(codigo_emenda, max_paginas = Inf, .progress = TRUE) {
+  um <- function(cod) {
+    df <- pt_to_tibble(pt_get_paginado(paste0("/api-de-dados/emendas/documentos/", cod), max_paginas = max_paginas))
+    if (nrow(df)) df <- tibble::add_column(df, codigo_emenda = as.character(cod), .before = 1)
+    df
+  }
+  pt_varios(codigo_emenda, um, .progress, "Documentos por emenda")
 }
 
-#' Detalhe de um documento de despesa
+#' Detalhe de documentos de despesa
 #'
 #' `GET /api-de-dados/despesas/documentos/{codigo}`: favorecido, UG, UO, órgão,
-#' classificação funcional-programática, valor, autor da emenda.
-#' @param codigo_documento Código completo (UG + gestão + número), como em
+#' classificação funcional-programática, valor, autor da emenda. Aceita um ou
+#' mais códigos e devolve um único tibble (uma linha por documento).
+#' @param codigo_documento Código(s) completo(s) (UG + gestão + número), como em
 #'   `codigo_documento` de [pt_emenda_documentos()].
-#' @return Tibble de uma linha.
+#' @inheritParams pt_emendas
+#' @return Tibble com uma linha por documento.
 #' @export
-pt_despesa_documento <- function(codigo_documento) {
-  pt_to_tibble(pt_get(paste0("/api-de-dados/despesas/documentos/", codigo_documento)))
+pt_despesa_documento <- function(codigo_documento, .progress = TRUE) {
+  um <- function(cod) pt_to_tibble(pt_get(paste0("/api-de-dados/despesas/documentos/", cod)))
+  pt_varios(codigo_documento, um, .progress, "Detalhe dos documentos")
 }
 
-#' Documentos relacionados a um documento de despesa
+#' Documentos relacionados a documentos de despesa
 #' @inheritParams pt_despesa_documento
 #' @param fase 1 = empenho, 2 = liquidação, 3 = pagamento.
 #' @export
-pt_documentos_relacionados <- function(codigo_documento, fase) {
-  pt_to_tibble(pt_get("/api-de-dados/despesas/documentos-relacionados", codigoDocumento = codigo_documento, fase = fase))
+pt_documentos_relacionados <- function(codigo_documento, fase, .progress = TRUE) {
+  um <- function(cod) {
+    df <- pt_to_tibble(pt_get("/api-de-dados/despesas/documentos-relacionados", codigoDocumento = cod, fase = fase))
+    if (nrow(df)) df <- tibble::add_column(df, codigo_documento = as.character(cod), .before = 1)
+    df
+  }
+  pt_varios(codigo_documento, um, .progress, "Documentos relacionados")
 }
 
-#' Favorecidos finais de um documento de despesa
+#' Favorecidos finais de documentos de despesa
 #' @inheritParams pt_despesa_documento
 #' @inheritParams pt_emendas
 #' @export
-pt_favorecidos_finais <- function(codigo_documento, max_paginas = Inf) {
-  pt_to_tibble(pt_get_paginado("/api-de-dados/despesas/favorecidos-finais-por-documento",
-                               codigoDocumento = codigo_documento, max_paginas = max_paginas))
+pt_favorecidos_finais <- function(codigo_documento, max_paginas = Inf, .progress = TRUE) {
+  um <- function(cod) {
+    df <- pt_to_tibble(pt_get_paginado("/api-de-dados/despesas/favorecidos-finais-por-documento",
+                                       codigoDocumento = cod, max_paginas = max_paginas))
+    if (nrow(df)) df <- tibble::add_column(df, codigo_documento = as.character(cod), .before = 1)
+    df
+  }
+  pt_varios(codigo_documento, um, .progress, "Favorecidos finais")
 }
 
 #' Emendas com seus documentos e favorecidos (uma linha por documento)
@@ -189,23 +240,16 @@ pt_favorecidos_finais <- function(codigo_documento, max_paginas = Inf) {
 #' @return Tibble.
 #' @export
 emendas_execucao <- function(ano, autor = NULL, tipo = NULL, detalhar = TRUE, max_emendas = Inf, .progress = TRUE) {
-  emendas <- pt_emendas(ano, autor = autor, tipo = tipo)
+  emendas <- pt_emendas(ano, autor = autor, tipo = tipo, .progress = .progress)
   if (nrow(emendas) == 0) return(emendas)
   if (is.finite(max_emendas)) emendas <- utils::head(emendas, max_emendas)
-  if (.progress) cli::cli_progress_bar("Documentos por emenda", total = nrow(emendas))
-  docs <- lapply(emendas$codigo_emenda, function(cod) {
-    if (.progress) cli::cli_progress_update(.envir = parent.frame(2))
-    pt_emenda_documentos(cod)
-  })
-  docs <- docs[vapply(docs, nrow, integer(1)) > 0]
-  docs_df <- if (length(docs)) do.call(rbind, docs) else tibble::tibble(codigo_emenda = character())
+  docs_df <- pt_emenda_documentos(emendas$codigo_emenda, .progress = .progress)
+  if (nrow(docs_df) == 0) docs_df <- tibble::tibble(codigo_emenda = character())
   out <- merge(emendas, docs_df, by = "codigo_emenda", all.x = TRUE, suffixes = c("", "_doc"), sort = FALSE)
   if (detalhar && "codigo_documento" %in% names(out)) {
     cods <- unique(stats::na.omit(out$codigo_documento))
-    det <- lapply(cods, pt_despesa_documento)
-    det <- det[vapply(det, nrow, integer(1)) > 0]
-    if (length(det)) {
-      det_df <- do.call(rbind, det)
+    det_df <- pt_despesa_documento(cods, .progress = .progress)
+    if (nrow(det_df)) {
       names(det_df)[names(det_df) == "documento"] <- "codigo_documento"
       det_df <- det_df[!duplicated(det_df$codigo_documento), ]
       out <- merge(out, det_df, by = "codigo_documento", all.x = TRUE, suffixes = c("", "_det"), sort = FALSE)

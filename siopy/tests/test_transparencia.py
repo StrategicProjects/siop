@@ -121,3 +121,45 @@ def test_401_vira_erro():
 
     with pytest.raises(SiopHTTPError, match="401"):
         pt_emendas(2025)
+
+
+@respx.mock
+def test_pt_despesa_documento_vetorizado():
+    for cod in ("D1", "D2"):
+        respx.get(f"{PT_BASE}/api-de-dados/despesas/documentos/{cod}").mock(
+            return_value=httpx.Response(200, json={"documento": cod, "valor": "1,00"})
+        )
+    df = pt_despesa_documento(["D1", "D2"])
+    assert list(df["documento"]) == ["D1", "D2"]
+
+
+@respx.mock
+def test_pt_emenda_documentos_vetorizado():
+    for cod in ("A1", "B2"):
+        respx.get(f"{PT_BASE}/api-de-dados/emendas/documentos/{cod}").mock(
+            side_effect=[
+                httpx.Response(200, json=[{"id": 1, "fase": "Empenho"}]),
+                httpx.Response(200, json=[]),
+            ]
+        )
+    df = pt_emenda_documentos(["A1", "B2"])
+    assert list(df["codigo_emenda"]) == ["A1", "B2"]
+
+
+@respx.mock
+def test_pt_emendas_varios_autores_deduplica():
+    route = respx.get(f"{PT_BASE}/api-de-dados/emendas")
+    emenda = {"codigoEmenda": "X1", "ano": 2025}
+    route.mock(
+        side_effect=[
+            httpx.Response(200, json=[emenda]),
+            httpx.Response(200, json=[]),
+            httpx.Response(200, json=[emenda]),
+            httpx.Response(200, json=[]),
+        ]
+    )
+    df = pt_emendas(2025, autor=["Fulano", "Fulano de Tal"])
+    assert route.call_count == 4
+    assert "nomeAutor=FULANO" in str(route.calls[0].request.url)
+    assert "nomeAutor=FULANO+DE+TAL" in str(route.calls[2].request.url).replace("%20", "+")
+    assert len(df) == 1
