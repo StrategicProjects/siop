@@ -1,0 +1,32 @@
+Package: siopr
+Title: Orçamento Federal (SIOP Dados Abertos) e Emendas Parlamentares (Portal da Transparência)
+Version: 0.1.0
+Authors@R: 
+    person("André", "Leite", , "leite@castlab.org", role = c("aut", "cre"))
+Description: Acesso, em tibbles, a fontes públicas do orçamento federal brasileiro:
+    o endpoint SPARQL e os arquivos CSV dos Dados Abertos do SIOP (Secretaria de
+    Orçamento Federal), incluindo as dotações de emendas parlamentares (RP 6/7/8/9),
+    e a API REST do Portal da Transparência (CGU) para emendas por autor e os
+    documentos de despesa associados. Nenhuma credencial do SIOP é necessária.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Language: pt-BR
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Depends: 
+    R (>= 4.1)
+Imports: 
+    cli,
+    httr2 (>= 1.0.0),
+    readr,
+    rlang,
+    tibble
+Suggests: 
+    dplyr,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/castlab/siop-sdk
+BugReports: https://github.com/castlab/siop-sdk/issues
