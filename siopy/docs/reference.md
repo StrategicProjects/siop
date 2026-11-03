@@ -53,3 +53,13 @@
 ## Utilidades
 
 ::: siopy.set_verbose
+
+## Apoio (Câmara, IBGE, CNPJ)
+
+::: siopy.camara_deputados
+
+::: siopy.ibge_municipios
+
+::: siopy.cnpj_municipio
+
+::: siopy.sem_acento

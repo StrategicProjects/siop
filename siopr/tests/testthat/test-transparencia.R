@@ -77,3 +77,10 @@ test_that("401 vira erro httr2", {
   mock_queue(httr2::response(401, body = charToRaw("{}")))
   expect_error(pt_emendas(2025), "401")
 })
+
+test_that("pt_emendas normaliza o autor (acentos e caixa)", {
+  local_pt_key()
+  reqs <- mock_queue(resp_json("pt_vazio.json"))
+  pt_emendas(2025, autor = "Túlio Gadêlha")
+  expect_match(reqs()[[1]]$url, "nomeAutor=TULIO%20GADELHA")
+})

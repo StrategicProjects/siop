@@ -106,7 +106,9 @@ pt_to_tibble <- function(itens) {
 #' empenhado, liquidado, pago e de restos a pagar (inscrito, cancelado, pago).
 #'
 #' @param ano Ano da emenda.
-#' @param autor Nome do parlamentar (busca textual da API).
+#' @param autor Nome do parlamentar (busca textual da API). Acentos são
+#'   removidos e o nome vai em maiúsculas automaticamente — a busca da API
+#'   não encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").
 #' @param tipo Tipo de emenda, como na API (ex.: `"Emenda Individual - Transferências
 #'   com Finalidade Definida"`).
 #' @param codigo,numero,funcao,subfuncao Demais filtros da API (texto).
@@ -121,6 +123,7 @@ pt_to_tibble <- function(itens) {
 #' @export
 pt_emendas <- function(ano = NULL, autor = NULL, tipo = NULL, codigo = NULL, numero = NULL,
                        funcao = NULL, subfuncao = NULL, max_paginas = Inf) {
+  if (!is.null(autor)) autor <- toupper(sem_acento(autor))
   itens <- pt_get_paginado("/api-de-dados/emendas", ano = ano, nomeAutor = autor, tipoEmenda = tipo,
                            codigoEmenda = codigo, numeroEmenda = numero, codigoFuncao = funcao,
                            codigoSubfuncao = subfuncao, max_paginas = max_paginas)

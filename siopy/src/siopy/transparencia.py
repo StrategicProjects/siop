@@ -204,9 +204,16 @@ def pt_emendas(
 ) -> pd.DataFrame:
     """Emendas parlamentares (``/api-de-dados/emendas``), todas as páginas.
 
-    ``autor`` é o nome do parlamentar (busca textual); ``tipo`` como na API
-    (ex.: "Emenda Individual - Transferências com Finalidade Definida"). Valores em R$ numéricos.
+    ``autor`` é o nome do parlamentar (busca textual); acentos são removidos e
+    o nome vai em maiúsculas automaticamente — a busca da API não encontra
+    nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). ``tipo`` como na
+    API (ex.: "Emenda Individual - Transferências com Finalidade Definida").
+    Valores em R$ numéricos.
     """
+    if autor is not None:
+        from .apoio import sem_acento
+
+        autor = sem_acento(autor).upper()
     pt, own = _pt(client)
     try:
         itens = pt.get_paginado(

@@ -8,6 +8,7 @@ Fontes públicas, sem credencial do SIOP:
 
 from ._msg import set_verbose
 from ._version import __version__
+from .apoio import camara_deputados, cnpj_municipio, ibge_municipios, sem_acento
 from .catalogo import (
     siop_acompanhamento,
     siop_cadastro_acoes,
@@ -41,7 +42,10 @@ __all__ = [
     "TIPO_EMENDA_RP",
     "PortalTransparencia",
     "__version__",
+    "camara_deputados",
+    "cnpj_municipio",
     "emendas_execucao",
+    "ibge_municipios",
     "pt_despesa_documento",
     "pt_documentos_relacionados",
     "pt_emenda_documentos",
@@ -49,6 +53,7 @@ __all__ = [
     "pt_favorecidos_finais",
     "pt_has_key",
     "pt_set_key",
+    "sem_acento",
     "set_verbose",
     "siop_acompanhamento",
     "siop_cadastro_acoes",

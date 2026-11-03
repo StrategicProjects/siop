@@ -17,17 +17,25 @@ reproduzíveis, mas exigem rede e a chave do Portal da Transparência; as saída
 mostradas (e as figuras) foram computadas em novembro de 2026, sobre o
 exercício de 2025.
 
+```{r setup}
+library(siopr)
+library(dplyr)
+library(purrr)
+```
+
 ## O problema: a emenda não diz o município
 
 No Portal da Transparência, a emenda tem um campo de localidade — mas ele quase
 nunca desce ao município:
 
 ```{r}
-library(siopr)
-em <- pt_emendas(2025, autor = "PEDRO CAMPOS")
-table(em$localidade_gasto)
-#>        MÚLTIPLO        Nacional PERNAMBUCO (UF)     RECIFE - PE
-#>               3               1              12               1
+pt_emendas(2025, autor = "Pedro Campos") |>
+  count(localidade_gasto)
+#>   localidade_gasto     n
+#> 1         MÚLTIPLO     3
+#> 2         Nacional     1
+#> 3  PERNAMBUCO (UF)    12
+#> 4      RECIFE - PE     1
 ```
 
 O destino de verdade aparece na **execução**: cada emenda tem documentos SIAFI
@@ -37,36 +45,30 @@ municípios, é a prefeitura ou o fundo municipal.
 
 ## Passo 1: os deputados, na API da Câmara
 
-A API de Dados Abertos da Câmara lista os 25 deputados federais em exercício
-por PE. Um cuidado: a busca textual do Portal não encontra nomes acentuados,
-então consultaremos sempre a forma sem acentos, em maiúsculas.
+`camara_deputados()` consulta a API de Dados Abertos da Câmara; com `uf =
+"PE"`, vêm os 25 deputados federais em exercício pelo estado.
 
 ```{r}
-dep <- httr2::request("https://dadosabertos.camara.leg.br/api/v2/deputados") |>
-  httr2::req_url_query(siglaUf = "PE", ordem = "ASC", ordenarPor = "nome") |>
-  httr2::req_perform() |>
-  httr2::resp_body_json()
-nomes <- vapply(dep$dados, `[[`, "", "nome")
-length(nomes)
+deputados <- camara_deputados(uf = "PE")
+nrow(deputados)
 #> [1] 25
 ```
 
 ## Passo 2: as emendas de cada um
 
-```{r}
-sem_acento <- function(x) {
-  # no Linux, iconv(x, to = "ASCII//TRANSLIT") resolve; no macOS o TRANSLIT
-  # gera marcas ("ANDR'E"), então troque os acentos explicitamente
-  toupper(chartr("áàâãéêíóôõúç", "aaaaeeiooouc", tolower(x)))
-}
+A busca da API do Portal é textual e por isso `pt_emendas()` já remove os
+acentos do autor sozinho ("Túlio Gadêlha" → "TULIO GADELHA"); filtramos pela
+igualdade exata para não levar homônimos parciais junto.
 
-emendas <- lapply(nomes, function(nome) {
-  em <- pt_emendas(2025, autor = sem_acento(nome))
-  em <- em[em$autor == sem_acento(nome), ]  # a busca da API é textual
-  if (nrow(em)) em$deputado <- nome
-  em
-})
-emendas <- do.call(rbind, emendas)
+```{r}
+emendas <- deputados |>
+  pull(nome) |>
+  map(\(nome) {
+    pt_emendas(2025, autor = nome) |>
+      filter(autor == toupper(sem_acento(nome))) |>
+      mutate(deputado = nome)
+  }) |>
+  list_rbind()
 nrow(emendas)
 #> [1] 235
 ```
@@ -82,13 +84,22 @@ empenho. São ~2 mil requisições; o pacote respeita sozinho o limite de 90
 por minuto do Portal, então a célula abaixo leva cerca de meia hora.
 
 ```{r}
-docs <- do.call(rbind, lapply(emendas$codigo_emenda, pt_emenda_documentos))
-empenhos <- unique(docs$codigo_documento[docs$fase == "Empenho"])
-detalhe <- do.call(rbind, lapply(empenhos, pt_despesa_documento))
-c(documentos = nrow(docs), empenhos = length(empenhos))
+documentos <- emendas |>
+  pull(codigo_emenda) |>
+  map(pt_emenda_documentos) |>
+  list_rbind()
+
+empenhos <- documentos |>
+  filter(fase == "Empenho") |>
+  distinct(codigo_documento) |>
+  pull() |>
+  map(pt_despesa_documento) |>
+  list_rbind()
+
+c(documentos = nrow(documentos), empenhos = nrow(empenhos))
 #> documentos   empenhos
 #>       6411       1854
-sum(detalhe$valor)
+sum(empenhos$valor)
 #> [1] 888278738
 ```
 
@@ -97,48 +108,49 @@ sum(detalhe$valor)
 Três situações, em ordem de volume:
 
 1. **O nome do favorecido já diz o município** ("MUNICIPIO DO BOM JARDIM",
-   "FUNDO MUNICIPAL DE SAUDE DE SAO JOSE DO EGITO"): basta casar com a lista
-   oficial de municípios de PE do IBGE — do nome mais longo para o mais
-   curto, para "São José do Egito" não virar "Egito".
+   "FUNDO MUNICIPAL DE SAUDE DE SAO JOSE DO EGITO"): basta casar com a
+   grafia oficial do IBGE (`ibge_municipios()`) — do nome mais longo para o
+   mais curto, para "São José do Egito" não virar "Egito".
 2. **O nome é genérico** ("FUNDO MUNICIPAL DE SAUDE", sem cidade — R$ 264
-   milhões!): o CNPJ resolve; a API pública Minha Receita devolve o município
-   da sede.
+   milhões!): o CNPJ resolve; `cnpj_municipio()` consulta a Minha Receita e
+   devolve o município da sede.
 3. **O favorecido não é municipal**: fornecedores (compras centralizadas de
    máquinas e equipamentos pelos ministérios), o estado e seus fundos,
    universidades. Ficam de fora do mapa — o CNPJ de um fornecedor de São
    Paulo não diz onde o trator vai trabalhar.
 
 ```{r}
-mun_pe <- httr2::request(
-  "https://servicodados.ibge.gov.br/api/v1/localidades/estados/PE/municipios"
-) |>
-  httr2::req_perform() |>
-  httr2::resp_body_json() |>
-  vapply(`[[`, "", "nome")
+municipios_pe <- ibge_municipios("PE") |>
+  mutate(busca = toupper(sem_acento(nome))) |>
+  arrange(desc(nchar(busca)))
 
-municipal <- grepl("^MUNICIPIO|^PREFEITURA|FUNDO MUNICIPAL|CAMARA MUNICIPAL",
-                   detalhe$nome_favorecido)
-ordem <- order(nchar(mun_pe), decreasing = TRUE)
-casa_municipio <- function(s) {
-  for (i in ordem) {
-    if (grepl(paste0("\\b", sem_acento(mun_pe[[i]]), "\\b"), s)) {
-      return(mun_pe[[i]])
-    }
-  }
-  NA_character_
+casa_municipio <- function(favorecido) {
+  alvo <- toupper(sem_acento(favorecido))
+  achado <- map_chr(alvo, \(s) {
+    i <- which(stringr::str_detect(s, paste0("\\b", municipios_pe$busca, "\\b")))[1]
+    if (is.na(i)) NA_character_ else municipios_pe$nome[[i]]
+  })
+  achado
 }
-detalhe$municipio <- NA_character_
-detalhe$municipio[municipal] <-
-  vapply(sem_acento(detalhe$nome_favorecido[municipal]), casa_municipio, "")
 
-# os genericos, pelo CNPJ da sede (Minha Receita)
-pendentes <- unique(detalhe$codigo_favorecido[municipal & is.na(detalhe$municipio)])
-sede <- vapply(pendentes, function(cnpj) {
-  httr2::request(paste0("https://minhareceita.org/", gsub("\\D", "", cnpj))) |>
-    httr2::req_perform() |>
-    httr2::resp_body_json() |>
-    getElement("municipio")
-}, "")
+empenhos <- empenhos |>
+  mutate(
+    municipal = stringr::str_detect(
+      nome_favorecido, "^MUNICIPIO|^PREFEITURA|FUNDO MUNICIPAL|CAMARA MUNICIPAL"
+    ),
+    municipio = if_else(municipal, casa_municipio(nome_favorecido), NA)
+  )
+
+# os genéricos, pelo CNPJ da sede
+sedes <- empenhos |>
+  filter(municipal, is.na(municipio)) |>
+  distinct(codigo_favorecido) |>
+  pull() |>
+  cnpj_municipio()
+
+empenhos <- empenhos |>
+  left_join(sedes, by = c("codigo_favorecido" = "cnpj"), suffix = c("", "_sede")) |>
+  mutate(municipio = coalesce(municipio, casa_municipio(municipio_sede)))
 ```
 
 O resultado: **86% do valor empenhado** tem município identificado (2% vai ao
@@ -150,14 +162,14 @@ aparecem na base são fornecedores e órgãos federais, nunca prefeituras.
 
 ```{r}
 library(ggplot2)
-agregado <- dplyr::summarise(
-  detalhe[!is.na(detalhe$municipio), ],
-  valor = sum(valor),
-  .by = municipio
-)
-pe <- geobr::read_municipality(code_muni = "PE", year = 2024)
-mapa <- merge(pe, agregado, by.x = "name_muni", by.y = "municipio", all.x = TRUE)
-ggplot(mapa) +
+
+por_municipio <- empenhos |>
+  filter(!is.na(municipio)) |>
+  summarise(valor = sum(valor), .by = municipio)
+
+geobr::read_municipality(code_muni = "PE", year = 2024) |>
+  left_join(por_municipio, by = c("name_muni" = "municipio")) |>
+  ggplot() +
   geom_sf(aes(fill = valor / 1e6), color = "white", linewidth = 0.1) +
   scale_fill_gradient(low = "#e3eef5", high = "#0e3a53", na.value = "grey92")
 ```

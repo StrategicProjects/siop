@@ -81,5 +81,15 @@ reference:
     contents:
       - emendas_execucao
 
+  - title: "Apoio"
+    desc: >
+      Fontes públicas auxiliares, sem chave: deputados (Câmara), municípios
+      (IBGE) e sede de CNPJ (Minha Receita), além de utilitários de texto.
+    contents:
+      - camara_deputados
+      - ibge_municipios
+      - cnpj_municipio
+      - sem_acento
+
 news:
   one_page: true

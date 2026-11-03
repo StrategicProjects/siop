@@ -106,3 +106,14 @@ Escolhido **`siopy-br`** (pending publisher criado pelo usuário: repo Strategic
 workflow pypi.yaml, environment pypi): muda só o nome de distribuição; o pacote importável
 continua `siopy`, preservando código, docs, site e o espelho com `siopr`. Precedente na org:
 `pixbr`.
+
+## 2026-11-03 · Funções de apoio: `camara_deputados`, `ibge_municipios`, `cnpj_municipio`, `sem_acento`
+
+A vinheta/guia "Em que municípios..." exigia chamadas cruas a três APIs públicas sem chave;
+viraram funções espelhadas nos dois pacotes (prefixo = fonte, como `siop_`/`pt_`): Câmara dos
+Deputados (`/deputados`, com paginação por `links.next`), IBGE localidades (grafia oficial dos
+municípios) e Minha Receita (município da sede de um CNPJ — resolve favorecidos genéricos tipo
+"FUNDO MUNICIPAL DE SAUDE"). `sem_acento()` é exportada (a busca textual do Portal não encontra
+nomes acentuados e o `iconv //TRANSLIT` do macOS gera marcas) e `pt_emendas()` normaliza o
+`autor` automaticamente. No código R, strings não-ASCII só com escapes `\uxxxx` (R CMD check
+avisa mesmo com Encoding: UTF-8).
