@@ -40,11 +40,17 @@ uv run --extra dev python -m ruff check --fix src tests && uv run --extra dev py
   brutos da coleta não estão no repo — regeneram-se pelos scripts (~35 min, rate limit 90/min).
 - **Virtuoso/SPARQL**: nunca `ORDER BY`+`OFFSET` (limite 10k); consultas grandes particionam
   por órgão. Medido 2026-11: órgão inteiro (MEC) 128k linhas em ~91 s — aceitável, sem mexer.
+- **CRAN rejeita link relativo no README.md** ("invalid file URI" — foi o motivo da devolução
+  de 2026-11-03): links para fora do pacote (ex.: `../siopy`) têm de ser URL absoluta; só podem
+  ser relativos os caminhos de arquivos que vão no tarball (`man/figures/*`). E a URL do siopy
+  é `…github.io/siop/siopy/` — a forma `…github.io/siopy/` dá 404.
 
 ## Publicação
 
 Site: push em main → workflows `pkgdown` (R, raiz do site) e `siopy-docs` (mkdocs em /siopy/)
 publicam em gh-pages; ver `gh run list`. CRAN: `rcmdcheck` no tarball + upload
-(`devtools:::upload_cran` dispensa prompt); registrar em `siopr/CRAN-SUBMISSION`. PyPI:
+(`devtools:::upload_cran` dispensa prompt; em auto mode o classificador bloqueia — o usuário
+autoriza na conversa); registrar em `siopr/CRAN-SUBMISSION`; depois do upload o usuário clica
+o link no e-mail (leite@castlab.org). PyPI:
 tag `siopy-v*` dispara `pypi.yaml` (trusted publishing; distribuição `siopy-br`, import
 `siopy`). E-mail de autoria: leite@castlab.org.
