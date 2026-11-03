@@ -12,10 +12,12 @@ na API do Portal da Transparência.
 ``` r
 
 library(siopr)
+library(dplyr)
 
 em <- siop_emendas(2025, tipo = c("individual", "bancada"))
-dplyr::summarise(em, loa = sum(loa), empenhado = sum(empenhado), pago = sum(pago),
-                 .by = c(tipo_emenda, desc_funcao))
+em |>
+  summarise(loa = sum(loa), empenhado = sum(empenhado), pago = sum(pago),
+            .by = c(tipo_emenda, desc_funcao))
 ```
 
 ## Por autor, com execução documento a documento
@@ -24,7 +26,8 @@ dplyr::summarise(em, loa = sum(loa), empenhado = sum(empenhado), pago = sum(pago
 
 Sys.setenv(PORTAL_TRANSPARENCIA_API_KEY = "sua-chave")
 ex <- emendas_execucao(2025, autor = "NOME DO PARLAMENTAR")
-dplyr::count(ex, nome_favorecido, uf_favorecido, wt = valor, sort = TRUE)
+ex |>
+  count(nome_favorecido, uf_favorecido, wt = valor, sort = TRUE)
 ```
 
 ## Cruzando as duas fontes
@@ -36,8 +39,9 @@ A chave natural entre elas é a classificação funcional-programática
 
 ``` r
 
-ex$cod_acao <- sub(" - .*$", "", ex$acao)
-dplyr::inner_join(ex, em, by = c("cod_acao"), suffix = c("_pt", "_siop"))
+ex |>
+  mutate(cod_acao = sub(" - .*$", "", acao)) |>
+  inner_join(em, by = "cod_acao", suffix = c("_pt", "_siop"))
 ```
 
 ## Quão atuais são os dados?

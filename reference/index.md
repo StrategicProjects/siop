@@ -73,3 +73,17 @@ SIOP × Portal: uma linha por documento de despesa.
 
 - [`emendas_execucao()`](https://strategicprojects.github.io/siop/reference/emendas_execucao.md)
   : Emendas com seus documentos e favorecidos (uma linha por documento)
+
+## Apoio
+
+Fontes públicas auxiliares, sem chave: deputados (Câmara), municípios
+(IBGE) e sede de CNPJ (Minha Receita), além de utilitários de texto.
+
+- [`camara_deputados()`](https://strategicprojects.github.io/siop/reference/camara_deputados.md)
+  : Deputados federais (Dados Abertos da Câmara)
+- [`ibge_municipios()`](https://strategicprojects.github.io/siop/reference/ibge_municipios.md)
+  : Municípios (IBGE)
+- [`cnpj_municipio()`](https://strategicprojects.github.io/siop/reference/cnpj_municipio.md)
+  : Município da sede de um CNPJ (Minha Receita)
+- [`sem_acento()`](https://strategicprojects.github.io/siop/reference/sem_acento.md)
+  : Remover acentos

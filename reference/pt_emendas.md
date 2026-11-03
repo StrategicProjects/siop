@@ -28,7 +28,9 @@ pt_emendas(
 
 - autor:
 
-  Nome do parlamentar (busca textual da API).
+  Nome do parlamentar (busca textual da API). Acentos são removidos e o
+  nome vai em maiúsculas automaticamente — a busca da API não encontra
+  nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA").
 
 - tipo:
 
