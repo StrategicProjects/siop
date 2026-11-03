@@ -1554,11 +1554,13 @@ sem <code>ORDER BY</code> e particione por órgão/UO quando o resultado for mui
     <div class="doc doc-contents first">
 
         <p>Emendas parlamentares (<code>/api-de-dados/emendas</code>), todas as páginas.</p>
-<p><code>autor</code> é o nome do parlamentar (busca textual); acentos são removidos e
-o nome vai em maiúsculas automaticamente — a busca da API não encontra
-nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). <code>tipo</code> como na
-API (ex.: "Emenda Individual - Transferências com Finalidade Definida").
-Valores em R$ numéricos.</p>
+<p><code>autor</code> é um ou mais nomes de parlamentar (busca textual); acentos são
+removidos e o nome vai em maiúsculas automaticamente — a busca da API não
+encontra nomes acentuados ("Túlio Gadêlha" vira "TULIO GADELHA"). Com
+vários autores, as buscas são feitas uma a uma e emendas repetidas (a
+busca é parcial) são deduplicadas pelo código. <code>tipo</code> como na API (ex.:
+"Emenda Individual - Transferências com Finalidade Definida"). Valores em
+R$ numéricos.</p>
 
 
     </div>
@@ -1576,7 +1578,9 @@ Valores em R$ numéricos.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Documentos (empenho/liquidação/pagamento) ligados a uma emenda (<code>/emendas/documentos/{codigo}</code>).</p>
+        <p>Documentos (empenho/liquidação/pagamento) ligados a emendas (<code>/emendas/documentos/{codigo}</code>).</p>
+<p>Aceita um ou mais códigos e devolve um único DataFrame, com a coluna
+<code>codigo_emenda</code> na frente.</p>
 
 
     </div>
@@ -1594,7 +1598,8 @@ Valores em R$ numéricos.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Detalhe de um documento de despesa (<code>/despesas/documentos/{codigo}</code>): favorecido, UG, UO, classificação.</p>
+        <p>Detalhe de documentos de despesa (<code>/despesas/documentos/{codigo}</code>): favorecido, UG, UO, classificação.</p>
+<p>Aceita um ou mais códigos e devolve um único DataFrame (uma linha por documento).</p>
 
 
     </div>
@@ -1612,7 +1617,7 @@ Valores em R$ numéricos.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Documentos relacionados a um documento (<code>fase</code>: 1 empenho, 2 liquidação, 3 pagamento).</p>
+        <p>Documentos relacionados (<code>fase</code>: 1 empenho, 2 liquidação, 3 pagamento); um ou mais códigos.</p>
 
 
     </div>
@@ -1630,7 +1635,7 @@ Valores em R$ numéricos.</p>
 
     <div class="doc doc-contents first">
 
-        <p>Favorecidos finais de um documento (<code>/despesas/favorecidos-finais-por-documento</code>).</p>
+        <p>Favorecidos finais (<code>/despesas/favorecidos-finais-por-documento</code>); um ou mais códigos.</p>
 
 
     </div>
