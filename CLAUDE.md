@@ -53,4 +53,12 @@ publicam em gh-pages; ver `gh run list`. CRAN: `rcmdcheck` no tarball + upload
 autoriza na conversa); registrar em `siopr/CRAN-SUBMISSION`; depois do upload o usuário clica
 o link no e-mail (leite@castlab.org). PyPI:
 tag `siopy-v*` dispara `pypi.yaml` (trusted publishing; distribuição `siopy-br`, import
-`siopy`). E-mail de autoria: leite@castlab.org.
+`siopy`); acompanhar com `gh run watch` e conferir em `pypi.org/pypi/siopy-br/json`.
+E-mail de autoria: leite@castlab.org.
+
+Onde está uma submissão no CRAN: as pastas de `https://cran.r-project.org/incoming/`
+(`newbies/` = pacote novo aguardando inspeção manual, fila FIFO de ~2 semanas em 2026-11;
+`waiting/` = aguardando resposta do mantenedor; `pretest/`, `inspect/`, `pending/`, `publish/`,
+pastas com iniciais de revisores; `archive/` = submissões devolvidas/antigas). Algumas
+listagens (`archive/`) são enormes e lentas — `curl --max-time 30` em cada uma, e
+`sed 's/<[^>]*>/ /g' | grep tar.gz | awk '{print $2,$3,$1}' | sort | nl` dá a posição na fila.
