@@ -34,6 +34,11 @@ uv run --extra dev python -m ruff check --fix src tests && uv run --extra dev py
 - **Job R 4.1 do CI** instala só deps hard + `Config/Needs/check41` (DESCRIPTION): os Suggests
   de vinheta (ggplot2/geobr) não resolvem em 4.1. Suggests novo usado em vinheta → declare no
   DESCRIPTION mesmo com `eval = FALSE` (o check acusa unstated dependency).
+- **`r-lib/actions/setup-r@v2` às vezes trava ~20 min no Ubuntu** (visto 2x em 2026-11-06, em
+  jobs diferentes; não é do código). Cancelar e `gh run rerun <id> --failed` resolve. Actions
+  dos workflows estão em versões Node 24 (2026-11); ao subir versão, confira `runs.using` no
+  `action.yml` da tag; ações de terceiros vão pinadas por SHA com `# vX.Y.Z` (exceto
+  `gh-action-pypi-publish`, ação Docker — ver comentário no `pypi.yaml`).
 - **Vinhetas rodam com `eval = FALSE`** (CRAN sem rede/chave): as saídas reais vão como
   comentários `#>` e as figuras são pré-computadas em `vignettes/figures/`. Scripts e agregados
   que as regeneram: `siopr/data-raw/emendas-pe/` (fora do build via .Rbuildignore). Os CSVs
