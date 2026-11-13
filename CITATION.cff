@@ -5,6 +5,7 @@ title: "siop: Brazilian federal budget (SIOP open data) and parliamentary amendm
 version: 0.1.0
 date-released: 2026-11-03
 license: MIT
+doi: 10.5281/zenodo.24209197
 repository-code: "https://github.com/StrategicProjects/siop"
 url: "https://strategicprojects.github.io/siop/"
 keywords:
