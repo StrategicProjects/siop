@@ -11,3 +11,6 @@ build/
 siopr/docs/
 siopy/site/
 .env
+
+# built R package tarballs
+/*.tar.gz
