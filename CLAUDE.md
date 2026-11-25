@@ -49,14 +49,29 @@ uv run --extra dev python -m ruff check --fix src tests && uv run --extra dev py
   de 2026-11-03): links para fora do pacote (ex.: `../siopy`) têm de ser URL absoluta; só podem
   ser relativos os caminhos de arquivos que vão no tarball (`man/figures/*`). E a URL do siopy
   é `…github.io/siop/siopy/` — a forma `…github.io/siopy/` dá 404.
+- **Revisão manual do CRAN (devolução de 2026-11-25, Leonore Hochhauser)** — o `check --as-cran`
+  não acusa nada disto:
+  - nomes de pacote, software e API entre aspas simples no Title e na Description
+    (`'SPARQL'`, `'REST'` API, `'tidyverse'`, `'tbl_df'`, `'SIOP'`); Title com menos de 65 caracteres;
+  - **todo Rd exportado precisa de `\value`** dizendo classe, estrutura e significado — inclusive
+    objeto exportado que não é função (`tipo_emenda_rp`). Conferir com `grep -L '\\value' man/*.Rd`
+    (só podem sobrar os `keyword{internal}` e o `siopr-package.Rd`);
+  - `portaldatransparencia.gov.br` responde 405 a qualquer cliente automático (até `/api-de-dados`):
+    endereços de lá vão como texto/código, nunca como link, em Rd e README. Já
+    `api.portaldatransparencia.gov.br` dá 403 a HEAD mas 200 a GET e o CRAN aceita (o
+    `urlchecker::url_check()` acusa 403 — falso positivo, assim como o 404 do badge do CRAN
+    enquanto o pacote não é publicado).
 
 ## Publicação
 
 Site: push em main → workflows `pkgdown` (R, raiz do site) e `siopy-docs` (mkdocs em /siopy/)
 publicam em gh-pages; ver `gh run list`. CRAN: `rcmdcheck` no tarball + upload
-(`devtools:::upload_cran` dispensa prompt; em auto mode o classificador bloqueia — o usuário
-autoriza na conversa); registrar em `siopr/CRAN-SUBMISSION`; depois do upload o usuário clica
-o link no e-mail (leite@castlab.org). PyPI:
+(`devtools:::upload_cran(pkg, "<tarball>")` dispensa prompt; em auto mode o classificador
+bloqueia — o usuário autoriza na conversa); registrar em `siopr/CRAN-SUBMISSION` **à mão**
+(Version, Date UTC, SHA do commit enviado — o `devtools:::flag_release()` não atualizou o arquivo
+em 2026-11-25); atualizar o `cran-comments.md` respondendo ponto a ponto ao revisor; apagar o
+tarball de `siopr/` (o `.gitignore` só cobre `*.tar.gz` na raiz); depois do upload o usuário
+clica o link no e-mail (leite@castlab.org) e o tarball aparece em `incoming/pretest/`. PyPI:
 tag `siopy-v*` dispara `pypi.yaml` (trusted publishing; distribuição `siopy-br`, import
 `siopy`); acompanhar com `gh run watch` e conferir em `pypi.org/pypi/siopy-br/json`.
 E-mail de autoria: leite@castlab.org.
