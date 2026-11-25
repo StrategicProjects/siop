@@ -24,11 +24,11 @@ Source:
 
 Leite A, Wasiliew M, Vasconcelos H, Amorim C, Bezerra D, Nascimento
 Barreto J (2026). *siopr: Brazilian Federal Budget ('SIOP') and
-Parliamentary Amendments ('Portal da Transparencia') Open Data*. R
-package version 0.1.0, <https://strategicprojects.github.io/siop/>.
+Parliamentary Amendments*. R package version 0.1.0,
+<https://strategicprojects.github.io/siop/>.
 
     @Manual{,
-      title = {siopr: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments ('Portal da Transparencia') Open Data},
+      title = {siopr: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments},
       author = {André Leite and Marcos Wasiliew and Hugo Vasconcelos and Carlos Amorim and Diogo Bezerra and Júlia {Nascimento Barreto}},
       year = {2026},
       note = {R package version 0.1.0},

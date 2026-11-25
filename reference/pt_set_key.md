@@ -1,10 +1,11 @@
 # Chave da API do Portal da Transparência
 
-A chave é gratuita:
-<https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
-Informe-a na variável de ambiente `PORTAL_TRANSPARENCIA_API_KEY` (por
-exemplo no `.Renviron`) ou, para a sessão, com `pt_set_key()`. O pacote
-nunca grava a chave em disco.
+A chave é gratuita; o cadastro é feito no site do Portal da
+Transparência, em
+`portaldatransparencia.gov.br/api-de-dados/cadastrar-email`. Informe-a
+na variável de ambiente `PORTAL_TRANSPARENCIA_API_KEY` (por exemplo no
+`.Renviron`) ou, para a sessão, com `pt_set_key()`. O pacote nunca grava
+a chave em disco.
 
 ## Usage
 

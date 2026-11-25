@@ -8,8 +8,8 @@ Orçamento Federal e emendas parlamentares em tibbles, a partir de
   créditos, acompanhamento físico, regionalização).
 - **Portal da Transparência** (CGU) — API REST de emendas (autor,
   número, valores) e documentos de despesa (empenhos, pagamentos,
-  favorecidos). Chave gratuita:
-  <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
+  favorecidos). Chave gratuita, com cadastro em
+  `portaldatransparencia.gov.br/api-de-dados/cadastrar-email`.
 
 Pacote irmão em Python:
 [`siopy`](https://strategicprojects.github.io/siop/siopy/).
