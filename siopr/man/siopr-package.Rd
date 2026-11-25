@@ -4,11 +4,11 @@
 \name{siopr-package}
 \alias{siopr}
 \alias{siopr-package}
-\title{siopr: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments ('Portal da Transparencia') Open Data}
+\title{siopr: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments}
 \description{
 \if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
 
-Tidyverse-friendly access to public sources of the Brazilian federal budget: the SPARQL endpoint and the official CSV files of the 'SIOP' open data portal (Federal Budget Secretariat, SOF/MPO) \url{https://www1.siop.planejamento.gov.br/}, including the budget lines of parliamentary amendments (primary result codes 6, 7, 8 and 9) with their full classification and execution values, and the REST API of the 'Portal da Transparencia' (CGU) \url{https://api.portaldatransparencia.gov.br/} for amendments by author and their expense documents. No 'SIOP' credential is required; the 'Portal da Transparencia' needs a free API key. Results are tibbles, with codes as text and monetary values as numbers.
+A 'tidyverse'-friendly interface to public sources of the Brazilian federal budget: the 'SPARQL' endpoint and the official CSV files of the 'SIOP' open data portal (Federal Budget Secretariat, SOF/MPO) \url{https://www1.siop.planejamento.gov.br/}, including the budget lines of parliamentary amendments (primary result codes 6, 7, 8 and 9) with their full classification and execution values, and the 'REST' API of the 'Portal da Transparencia' (CGU) \url{https://api.portaldatransparencia.gov.br/} for amendments by author and their expense documents. No 'SIOP' credential is required; the 'Portal da Transparencia' needs a free API key. Results are returned as data frames of class 'tbl_df', with codes as text and monetary values as numbers.
 }
 \seealso{
 Useful links:

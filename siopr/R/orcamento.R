@@ -4,6 +4,10 @@
 #' Resultado Primário: 6 = individuais (desde 2014), 7 = bancada (desde 2017),
 #' 8 = comissão e 9 = relator (observados a partir de 2020).
 #' @format Vetor nomeado de texto.
+#' @return Um vetor de texto (`character`) nomeado, de comprimento 4: os nomes são os
+#'   tipos de emenda (`individual`, `bancada`, `comissao`, `relator`) e os valores, os
+#'   códigos de Resultado Primário correspondentes (`"6"`, `"7"`, `"8"`, `"9"`).
+#'   Não é uma função: é um objeto exportado, usado por [siop_emendas()].
 #' @export
 tipo_emenda_rp <- c(individual = "6", bancada = "7", comissao = "8", relator = "9")
 

@@ -1,6 +1,5 @@
 Package: siopr
 Title: Brazilian Federal Budget ('SIOP') and Parliamentary Amendments
-    ('Portal da Transparencia') Open Data
 Version: 0.1.0
 Authors@R: c(
     person("André", "Leite", email = "leite@castlab.org", role = c("aut", "cre"),
@@ -17,17 +16,18 @@ Authors@R: c(
            email = "juliabarreto@gd.seplag.pe.gov.br", role = "aut",
            comment = c(ORCID = "0009-0004-2851-7770"))
   )
-Description: Tidyverse-friendly access to public sources of the Brazilian
-    federal budget: the SPARQL endpoint and the official CSV files of the
+Description: A 'tidyverse'-friendly interface to public sources of the Brazilian
+    federal budget: the 'SPARQL' endpoint and the official CSV files of the
     'SIOP' open data portal (Federal Budget Secretariat, SOF/MPO)
     <https://www1.siop.planejamento.gov.br/>, including the budget lines of
     parliamentary amendments (primary result codes 6, 7, 8 and 9) with
-    their full classification and execution values, and the REST API of the
+    their full classification and execution values, and the 'REST' API of the
     'Portal da Transparencia' (CGU)
     <https://api.portaldatransparencia.gov.br/> for amendments by author
     and their expense documents. No 'SIOP' credential is required; the
-    'Portal da Transparencia' needs a free API key. Results are tibbles,
-    with codes as text and monetary values as numbers.
+    'Portal da Transparencia' needs a free API key. Results are returned
+    as data frames of class 'tbl_df', with codes as text and monetary values
+    as numbers.
 License: MIT + file LICENSE
 URL: https://strategicprojects.github.io/siop/,
     https://github.com/StrategicProjects/siop

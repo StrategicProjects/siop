@@ -155,6 +155,11 @@ siop_creditos <- function(exercicio, refresh = FALSE) {
 
 #' Acompanhamento físico-financeiro das ações (CSV anual)
 #' @inheritParams siop_cadastro_acoes
+#' @return Um tibble (`tbl_df`) com uma linha por registro do arquivo oficial de
+#'   acompanhamento físico-financeiro do exercício (metas físicas e valores
+#'   financeiros previstos e realizados por ação e localizador). Todas as colunas
+#'   são texto e mantêm os nomes originais do arquivo; o atributo `"url"` guarda o
+#'   endereço de onde o arquivo foi baixado.
 #' @export
 siop_acompanhamento <- function(exercicio, refresh = FALSE) {
   dataset("acompanhamento", exercicio, NULL, refresh)

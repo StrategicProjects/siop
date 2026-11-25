@@ -16,7 +16,8 @@ pt_has_key()
 \code{pt_set_key()} devolve \code{NULL} invisivelmente; \code{pt_has_key()} um lógico.
 }
 \description{
-A chave é gratuita: \url{https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email}.
+A chave é gratuita; o cadastro é feito no site do Portal da Transparência, em
+\code{portaldatransparencia.gov.br/api-de-dados/cadastrar-email}.
 Informe-a na variável de ambiente \code{PORTAL_TRANSPARENCIA_API_KEY} (por exemplo no
 \code{.Renviron}) ou, para a sessão, com \code{pt_set_key()}. O pacote nunca grava a chave em disco.
 }

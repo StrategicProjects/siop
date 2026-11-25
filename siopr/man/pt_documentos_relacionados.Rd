@@ -14,6 +14,14 @@ pt_documentos_relacionados(codigo_documento, fase, .progress = TRUE)
 
 \item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
+\value{
+Um tibble (\code{tbl_df}) com uma linha por documento relacionado e as colunas
+\code{codigo_documento} (o código consultado), \code{data}, \code{fase}, \code{documento},
+\code{documento_resumido}, \code{especie}, \code{orgao_superior}, \code{orgao_vinculado},
+\code{unidade_gestora}, \code{elemento_despesa} e \code{favorecido} (texto) e \code{valor}
+(numérico, em reais). Tibble vazio (sem colunas) quando não há documentos
+relacionados.
+}
 \description{
 Documentos relacionados a documentos de despesa
 }

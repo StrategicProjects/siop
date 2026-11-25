@@ -8,7 +8,8 @@ pt_header <- "chave-api-dados"
 
 #' Chave da API do Portal da Transparência
 #'
-#' A chave é gratuita: <https://portaldatransparencia.gov.br/api-de-dados/cadastrar-email>.
+#' A chave é gratuita; o cadastro é feito no site do Portal da Transparência, em
+#' `portaldatransparencia.gov.br/api-de-dados/cadastrar-email`.
 #' Informe-a na variável de ambiente `PORTAL_TRANSPARENCIA_API_KEY` (por exemplo no
 #' `.Renviron`) ou, para a sessão, com `pt_set_key()`. O pacote nunca grava a chave em disco.
 #'
@@ -202,6 +203,12 @@ pt_despesa_documento <- function(codigo_documento, .progress = TRUE) {
 #' Documentos relacionados a documentos de despesa
 #' @inheritParams pt_despesa_documento
 #' @param fase 1 = empenho, 2 = liquidação, 3 = pagamento.
+#' @return Um tibble (`tbl_df`) com uma linha por documento relacionado e as colunas
+#'   `codigo_documento` (o código consultado), `data`, `fase`, `documento`,
+#'   `documento_resumido`, `especie`, `orgao_superior`, `orgao_vinculado`,
+#'   `unidade_gestora`, `elemento_despesa` e `favorecido` (texto) e `valor`
+#'   (numérico, em reais). Tibble vazio (sem colunas) quando não há documentos
+#'   relacionados.
 #' @export
 pt_documentos_relacionados <- function(codigo_documento, fase, .progress = TRUE) {
   um <- function(cod) {
@@ -215,6 +222,11 @@ pt_documentos_relacionados <- function(codigo_documento, fase, .progress = TRUE)
 #' Favorecidos finais de documentos de despesa
 #' @inheritParams pt_despesa_documento
 #' @inheritParams pt_emendas
+#' @return Um tibble (`tbl_df`) com uma linha por favorecido final: a coluna
+#'   `codigo_documento` (o código consultado, texto) na frente, seguida dos campos
+#'   devolvidos pela API, com nomes em `snake_case` (identificação do favorecido
+#'   final e valor recebido). Tibble vazio (sem colunas) quando o documento não tem
+#'   favorecidos finais registrados.
 #' @export
 pt_favorecidos_finais <- function(codigo_documento, max_paginas = Inf, .progress = TRUE) {
   um <- function(cod) {

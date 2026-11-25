@@ -9,6 +9,12 @@ Vetor nomeado de texto.
 \usage{
 tipo_emenda_rp
 }
+\value{
+Um vetor de texto (\code{character}) nomeado, de comprimento 4: os nomes são os
+tipos de emenda (\code{individual}, \code{bancada}, \code{comissao}, \code{relator}) e os valores, os
+códigos de Resultado Primário correspondentes (\code{"6"}, \code{"7"}, \code{"8"}, \code{"9"}).
+Não é uma função: é um objeto exportado, usado por \code{\link[=siop_emendas]{siop_emendas()}}.
+}
 \description{
 No orçamento federal as emendas parlamentares são identificadas pelo classificador
 Resultado Primário: 6 = individuais (desde 2014), 7 = bancada (desde 2017),

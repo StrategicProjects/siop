@@ -14,6 +14,13 @@ pt_favorecidos_finais(codigo_documento, max_paginas = Inf, .progress = TRUE)
 
 \item{.progress}{Mostrar barra de progresso quando houver mais de um item.}
 }
+\value{
+Um tibble (\code{tbl_df}) com uma linha por favorecido final: a coluna
+\code{codigo_documento} (o código consultado, texto) na frente, seguida dos campos
+devolvidos pela API, com nomes em \code{snake_case} (identificação do favorecido
+final e valor recebido). Tibble vazio (sem colunas) quando o documento não tem
+favorecidos finais registrados.
+}
 \description{
 Favorecidos finais de documentos de despesa
 }
